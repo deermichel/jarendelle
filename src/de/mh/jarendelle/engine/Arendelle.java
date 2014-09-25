@@ -17,20 +17,23 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle;
+package de.mh.jarendelle.engine;
 
-import de.mh.jarendelle.engine.CodeScreen;
-import de.mh.jarendelle.engine.MasterEvaluator;
+public class Arendelle {
 
-public class Main {
-
-	public static void main(String[] args) {
-		
-		String code = "";
-		CodeScreen screen = new CodeScreen("", "");
-		
-		MasterEvaluator.evaluate(code, screen);
-
+	public String code;
+	public int i;
+	
+	@Override
+	public String toString() {
+		return code;
 	}
-
+	
+	public Arendelle(String code) {
+		
+		this.code = code;
+		this.i = 0;
+		
+	}
+	
 }

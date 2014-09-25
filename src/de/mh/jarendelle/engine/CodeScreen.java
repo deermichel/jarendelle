@@ -17,20 +17,34 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle;
+package de.mh.jarendelle.engine;
 
-import de.mh.jarendelle.engine.CodeScreen;
-import de.mh.jarendelle.engine.MasterEvaluator;
+import java.util.Random;
 
-public class Main {
+public class CodeScreen {
 
-	public static void main(String[] args) {
+	public int x;
+	public int y;
+	public int color;
+	public String mainPath;
+	public String funcName;
+	public boolean openedByArgs;
+	public Random rand;
+	
+	public CodeScreen(String mainPath, String funcName) {
 		
-		String code = "";
-		CodeScreen screen = new CodeScreen("", "");
+		this.x = 0;
+		this.y = 0;
 		
-		MasterEvaluator.evaluate(code, screen);
-
+		this.color = 0;
+		
+		this.openedByArgs = false;
+		
+		this.rand = new Random();
+		
+		this.mainPath = mainPath;
+		this.funcName = funcName;
+		
 	}
-
+	
 }

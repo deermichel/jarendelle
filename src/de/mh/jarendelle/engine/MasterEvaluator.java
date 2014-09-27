@@ -22,32 +22,26 @@ package de.mh.jarendelle.engine;
 public class MasterEvaluator {
 	
 	/**
-	 * The very main evaluator that runs a given code on the screen.
-	 * @param code Code.
-	 * @param screen Screen.
+	 * The very main evaluator that runs a given code.
+	 * @param code code
+	 * @param width width of the array
+	 * @param height height of the array
+	 * @return a 2D four-color array created by the Arendelle code
 	 * @throws Exception 
 	 */
-	public static void evaluate(String code, CodeScreen screen) throws Exception {
+	public static int[][] evaluate(String code, int width, int height) throws Exception {
 		
-		//
 		// remove comments
-		//
 		code = MasterEvaluator.removeComments(code);
 		
-		//
 		// remove spaces for faster performance
-		//
 		code = MasterEvaluator.removeSpaces(code);
 		
-		//
 		// replace upper-case letters with the lower-case ones
-		//
 		code = code.toLowerCase();
 		
-		//
-		// setting up the Arendelle
-		//
-		Arendelle arendelle = new Arendelle(code);
+		// setting up an Arendelle instance
+		Arendelle arendelle = new Arendelle(code, width, height);
 		
 		
 		//////////////////
@@ -56,11 +50,10 @@ public class MasterEvaluator {
 		
 		// TODO: Set IDE title
 		
-		//
 		// running
-		//
-		Kernel.eval(arendelle, screen);
+		arendelle = Kernel.eval(arendelle);
 		
+		return arendelle.screen;
 	}
 	
 	public static String removeComments(String code) {

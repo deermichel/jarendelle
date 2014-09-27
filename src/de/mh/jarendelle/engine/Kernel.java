@@ -26,16 +26,17 @@ public class Kernel {
 
 	/**
 	 * eval is the main core of the language where it evaluates the given code.
-	 * @param arendelle a given arendelle instance
+	 * @param arendelle a given Arendelle instance
+	 * @return the new Arendelle instance
 	 * @throws Exception
 	 */
-	public static void eval(Arendelle arendelle, CodeScreen screen) throws Exception {
+	public static Arendelle eval(Arendelle arendelle) throws Exception {
 		
-		//
-		// So what we do is we read the code char-by-char and run the commands
-		// Just-In-Time. If we find a grammer we let grammer parsers take care
-		// of that.
-		//
+		/*
+		 *  So what we do is we read the code char-by-char and run the commands
+		 *  Just-In-Time. If we find a grammer we let grammer parsers take care
+		 *  of that.
+		 */
 		
 		char command = 0;
 		
@@ -55,7 +56,7 @@ public class Kernel {
 			//////////////////////////////////////////////////
 			
 			case '[':
-				LoopParser.parse(arendelle, screen);
+				arendelle = LoopParser.parse(arendelle);
 				break;
 				
 			/*case '!':
@@ -76,36 +77,36 @@ public class Kernel {
 			//////////////////////////////////////////////////
 				
 			case 'p':
-				if (screen.x >= 0 && screen.y >= 0 && screen.x < screen.width && screen.y < screen.height) {
-					screen.screen[screen.x][screen.y] = screen.color + 1;
+				if (arendelle.x >= 0 && arendelle.y >= 0 && arendelle.x < arendelle.width && arendelle.y < arendelle.height) {
+					arendelle.screen[arendelle.x][arendelle.y] = arendelle.color + 1;
 				}
 				break;
 				
 			case 'u':
-				screen.y--;
+				arendelle.y--;
 				break;
 				
 			case 'd':
-				screen.y++;
+				arendelle.y++;
 				break;
 				
 			case 'r':
-				screen.x++;
+				arendelle.x++;
 				break;
 				
 			case 'l':
-				screen.x--;
+				arendelle.x--;
 				break;
 				
 			/*case 'e':
 				break;*/
 				
 			case 'n':
-				screen.color = (screen.color + 1) % 4;
+				arendelle.color = (arendelle.color + 1) % 4;
 				break;
 				
 			case 'c':
-				for (int[] row : screen.screen) Arrays.fill(row, 0);
+				for (int[] row : arendelle.screen) Arrays.fill(row, 0);
 				break;
 				
 			case 'w':
@@ -117,8 +118,8 @@ public class Kernel {
 				break;*/
 				
 			case 'i':
-				screen.x = 0;
-				screen.y = 0;
+				arendelle.x = 0;
+				arendelle.y = 0;
 				break;
 				
 				
@@ -161,6 +162,7 @@ public class Kernel {
 			
 		}
 		
+		return arendelle;
 	}
 	
 }

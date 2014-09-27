@@ -19,20 +19,44 @@
 
 package de.mh.jarendelle.engine;
 
+import java.util.Random;
+
 public class Arendelle {
 
 	public String code;
 	public int i;
+
+	public int x;
+	public int y;
+	public int z;
+	public int color;
+	public int width;
+	public int height;
+	public int screen[][];
+	public Random rand;
 	
 	@Override
 	public String toString() {
 		return code;
 	}
 	
-	public Arendelle(String code) {
+	public Arendelle(String code, int width, int height) {
 		
 		this.code = code;
 		this.i = 0;
+		
+		
+		this.x = 0;
+		this.y = 0;
+		this.z = 0;
+		
+		this.color = 0;
+		
+		this.width = width;
+		this.height = height;
+		this.screen = new int[width][height];
+		
+		this.rand = new Random();
 		
 	}
 	

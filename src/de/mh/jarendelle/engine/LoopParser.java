@@ -22,10 +22,11 @@ package de.mh.jarendelle.engine;
 public class LoopParser {
 
 	/** This is the LoopParser kernel, where it parses and runs a loop.
-	 * @param arendelle a given anrendelle instance
+	 * @param arendelle a given Arendelle instance
+	 * @return the new Arendelle instance
 	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen) throws Exception {
+	public static Arendelle parse(Arendelle arendelle) throws Exception {
 		
 		String mathExpr = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {
@@ -43,11 +44,18 @@ public class LoopParser {
 		
 		arendelle.i++;
 		
-		Arendelle loopArendelle = new Arendelle(loopCode);
-		CodeScreen loopScreen = screen;
-		for (int i = 0; i < loopTimes; i++) Kernel.eval(loopArendelle, loopScreen);
-		screen = loopScreen;
+		Arendelle loopArendelle = arendelle;
+		loopArendelle.code = loopCode;
+		for (int i = 0; i < loopTimes; i++) {
+			loopArendelle.i = 0;
+			loopArendelle = Kernel.eval(loopArendelle);
+		}
 		
+		loopArendelle.code = arendelle.code;
+		loopArendelle.i = arendelle.i;
+		arendelle = loopArendelle;
+		
+		return arendelle;
 	}
 	
 }

@@ -30,7 +30,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import de.mh.jarendelle.engine.CodeScreen;
 import de.mh.jarendelle.engine.MasterEvaluator;
 
 public class Main {
@@ -122,14 +121,12 @@ class ArendelleDemo implements KeyListener {
 		code = code.replaceAll("#j", String.valueOf(cellsY));
 		code = code.replaceAll(" ", "");
 		
-		CodeScreen screen = new CodeScreen(cellsX, cellsY);
 		try {
-			MasterEvaluator.evaluate(code, screen);
+			result = MasterEvaluator.evaluate(code, cellsX, cellsY);
 		} catch (Exception e) {
-			System.err.println(e.toString());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		result = screen.screen;
 		
 		/*for (int i = 0; i < code.length(); i++) {
 			

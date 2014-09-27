@@ -25,25 +25,26 @@ public class CodeScreen {
 
 	public int x;
 	public int y;
+	public int z;
 	public int color;
-	public String mainPath;
-	public String funcName;
-	public boolean openedByArgs;
+	public int width;
+	public int height;
+	public int screen[][];
 	public Random rand;
 	
-	public CodeScreen(String mainPath, String funcName) {
+	public CodeScreen(int width, int height) {
 		
 		this.x = 0;
 		this.y = 0;
+		this.z = 0;
 		
 		this.color = 0;
 		
-		this.openedByArgs = false;
+		this.width = width;
+		this.height = height;
+		this.screen = new int[width][height];
 		
 		this.rand = new Random();
-		
-		this.mainPath = mainPath;
-		this.funcName = funcName;
 		
 	}
 	

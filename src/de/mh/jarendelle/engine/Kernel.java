@@ -19,14 +19,17 @@
 
 package de.mh.jarendelle.engine;
 
+import java.util.Arrays;
+
 /** Arendelles Kernel which evaluates, reads and runs the code. */
 public class Kernel {
 
 	/**
 	 * eval is the main core of the language where it evaluates the given code.
 	 * @param arendelle a given arendelle instance
+	 * @throws Exception
 	 */
-	public static void eval(Arendelle arendelle, CodeScreen screen) {
+	public static void eval(Arendelle arendelle, CodeScreen screen) throws Exception {
 		
 		//
 		// So what we do is we read the code char-by-char and run the commands
@@ -52,9 +55,10 @@ public class Kernel {
 			//////////////////////////////////////////////////
 			
 			case '[':
+				LoopParser.parse(arendelle, screen);
 				break;
 				
-			case '!':
+			/*case '!':
 				break;
 				
 			case '(':
@@ -64,7 +68,7 @@ public class Kernel {
 				break;
 				
 			case '\'':
-				break;
+				break;*/
 			
 				
 			//////////////////////////////////////////////////
@@ -72,6 +76,9 @@ public class Kernel {
 			//////////////////////////////////////////////////
 				
 			case 'p':
+				if (screen.x >= 0 && screen.y >= 0 && screen.x < screen.width && screen.y < screen.height) {
+					screen.screen[screen.x][screen.y] = screen.color + 1;
+				}
 				break;
 				
 			case 'u':
@@ -87,11 +94,10 @@ public class Kernel {
 				break;
 				
 			case 'l':
-				screen.y--;
+				screen.x--;
 				break;
 				
 			/*case 'e':
-			    TODO: WhileSign?
 				break;*/
 				
 			case 'n':
@@ -99,13 +105,16 @@ public class Kernel {
 				break;
 				
 			case 'c':
+				for (int[] row : screen.screen) Arrays.fill(row, 0);
 				break;
 				
 			case 'w':
+				Thread.sleep(1);
 				break;
 				
-			case 's':
-				break;
+			/*case 's':
+			    TODO: Why?
+				break;*/
 				
 			case 'i':
 				screen.x = 0;
@@ -118,36 +127,36 @@ public class Kernel {
 			/////////////////////////////////////////////////////
 				
 			case ']':
-				break;
+				throw new Exception("Unexpected loop token ']' found.");
 				
-			case ')':
-				break;
+			/*case ')':
+				throw new Exception("Unexpected variable token ')' found.");
 				
 			case '}':
-				break;
+				throw new Exception("Unexpected condition token '}' found.");
 				
 			case '<':
-				break;
+				throw new Exception("Unexpected function header found.");
 				
 			case '>':
-				break;
+				throw new Exception("Unexpected function header token '>' found.");
 				
 			case ',':
-				break;
+				throw new Exception("Unexpected grammar divider ',' found.");*/
 				
 			/*case '\n':
 				TODO: Why?
 				break;*/
 				
 			default:
-				break;
+				throw new Exception("Unknown command: '" + command + "'");
 				
 			}
 			
 			//////////////////////
 			/// END OF RUNTIME ///
 			//////////////////////
-			
+
 			arendelle.i++;
 			
 		}

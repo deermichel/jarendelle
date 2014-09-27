@@ -25,19 +25,28 @@ public class MasterEvaluator {
 	 * The very main evaluator that runs a given code on the screen.
 	 * @param code Code.
 	 * @param screen Screen.
+	 * @throws Exception 
 	 */
-	public static void evaluate(String code, CodeScreen screen) {
+	public static void evaluate(String code, CodeScreen screen) throws Exception {
 		
+		//
 		// remove comments
-		code = MasterEvaluator.commentRemover(code);
+		//
+		code = MasterEvaluator.removeComments(code);
 		
+		//
 		// remove spaces for faster performance
-		code = MasterEvaluator.spaceRemover(code);
+		//
+		code = MasterEvaluator.removeSpaces(code);
 		
+		//
 		// replace upper-case letters with the lower-case ones
+		//
 		code = code.toLowerCase();
 		
+		//
 		// setting up the Arendelle
+		//
 		Arendelle arendelle = new Arendelle(code);
 		
 		
@@ -47,12 +56,14 @@ public class MasterEvaluator {
 		
 		// TODO: Set IDE title
 		
-		//running
+		//
+		// running
+		//
 		Kernel.eval(arendelle, screen);
 		
 	}
 	
-	public static String commentRemover(String code) {
+	public static String removeComments(String code) {
 		
 		String codeWithoutComments = "";
 		char command = 0;
@@ -99,7 +110,7 @@ public class MasterEvaluator {
 		return codeWithoutComments;
 	}
 	
-	public static String spaceRemover(String code) {
+	public static String removeSpaces(String code) {
 
 		String codeWithoutSpaces = "";
 		

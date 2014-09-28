@@ -37,14 +37,26 @@ public class LoopParser {
 		int loopTimes = new Expression(mathExpr).eval().intValue();
 		
 		String loopCode = "";
-		for (int i = arendelle.i + 2; i != arendelle.code.lastIndexOf(']'); i++) {
+		int nestedLoops = 0;
+		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedLoops == 0); i++) {
+			
 			loopCode += arendelle.code.charAt(i);
+			
+			switch (arendelle.code.charAt(i)) {
+			case '[':
+				nestedLoops++;
+				break;
+			case ']':
+				nestedLoops--;
+				break;
+			}
+			
 			arendelle.i = i;
 		}
 		
 		arendelle.i++;
 		
-		Arendelle loopArendelle = arendelle;
+		Arendelle loopArendelle = new Arendelle(arendelle);
 		loopArendelle.code = loopCode;
 		for (int i = 0; i < loopTimes; i++) {
 			loopArendelle.i = 0;
@@ -53,7 +65,7 @@ public class LoopParser {
 		
 		loopArendelle.code = arendelle.code;
 		loopArendelle.i = arendelle.i;
-		arendelle = loopArendelle;
+		arendelle = new Arendelle(loopArendelle);
 		
 		return arendelle;
 	}

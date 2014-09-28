@@ -60,4 +60,22 @@ public class Arendelle {
 		
 	}
 	
+	public Arendelle(Arendelle arendelle) {
+		
+		this.code = arendelle.code;
+		this.i = arendelle.i;
+		
+		
+		this.x = arendelle.x;
+		this.y = arendelle.y;
+		this.z = arendelle.z;
+		
+		this.width = arendelle.width;
+		this.height = arendelle.height;
+		this.screen = arendelle.screen;
+		
+		this.rand = arendelle.rand;
+		
+	}
+	
 }

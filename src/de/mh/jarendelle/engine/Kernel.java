@@ -32,6 +32,8 @@ public class Kernel {
 	 */
 	public static Arendelle eval(Arendelle arendelle) throws Exception {
 		
+		System.out.println(arendelle);
+		
 		/*
 		 *  So what we do is we read the code char-by-char and run the commands
 		 *  Just-In-Time. If we find a grammer we let grammer parsers take care

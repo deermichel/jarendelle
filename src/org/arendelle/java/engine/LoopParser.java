@@ -17,24 +17,22 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle.engine;
+package org.arendelle.java.engine;
 
 public class LoopParser {
 
 	/** This is the LoopParser kernel, where it parses and runs a loop.
 	 * @param arendelle a given Arendelle instance
-	 * @return the new Arendelle instance
+	 * @param screen Screen.
 	 * @throws Exception 
 	 */
-	public static Arendelle parse(Arendelle arendelle) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen) throws Exception {
 		
 		String mathExpr = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {
 			mathExpr += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
-		
-		int loopTimes = new Expression(mathExpr).eval().intValue();
 		
 		String loopCode = "";
 		int nestedLoops = 0;
@@ -56,18 +54,25 @@ public class LoopParser {
 		
 		arendelle.i++;
 		
-		Arendelle loopArendelle = new Arendelle(arendelle);
-		loopArendelle.code = loopCode;
-		for (int i = 0; i < loopTimes; i++) {
-			loopArendelle.i = 0;
-			loopArendelle = Kernel.eval(loopArendelle);
+		Arendelle loopArendelle = new Arendelle(loopCode);
+		
+		// determine if expression is a number (for-loop) or a boolean (while-loop)
+		if (mathExpr.contains("=") || mathExpr.contains("<") || mathExpr.contains(">") || mathExpr.contains("&") || mathExpr.contains("|")) {
+			
+			while (new Expression(Variables.replace(mathExpr, screen)).eval().intValue() != 0) {
+				loopArendelle.i = 0;
+				Kernel.eval(loopArendelle, screen);
+			}
+			
+		} else {
+			
+			for (int i = 0; i < new Expression(Variables.replace(mathExpr, screen)).eval().intValue(); i++) {
+				loopArendelle.i = 0;
+				Kernel.eval(loopArendelle, screen);
+			}
+			
 		}
 		
-		loopArendelle.code = arendelle.code;
-		loopArendelle.i = arendelle.i;
-		arendelle = new Arendelle(loopArendelle);
-		
-		return arendelle;
 	}
 	
 }

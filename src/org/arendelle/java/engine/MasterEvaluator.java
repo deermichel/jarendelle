@@ -17,19 +17,17 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle.engine;
+package org.arendelle.java.engine;
 
 public class MasterEvaluator {
 	
 	/**
-	 * The very main evaluator that runs a given code.
-	 * @param code code
-	 * @param width width of the array
-	 * @param height height of the array
-	 * @return a 2D four-color array created by the Arendelle code
+	 * The very main evaluator that runs a given code on a screen.
+	 * @param code Code.
+	 * @param screen Screen.
 	 * @throws Exception 
 	 */
-	public static int[][] evaluate(String code, int width, int height) throws Exception {
+	public static void evaluate(String code, CodeScreen screen) throws Exception {
 		
 		// remove comments
 		code = MasterEvaluator.removeComments(code);
@@ -41,7 +39,7 @@ public class MasterEvaluator {
 		code = code.toLowerCase();
 		
 		// setting up an Arendelle instance
-		Arendelle arendelle = new Arendelle(code, width, height);
+		Arendelle arendelle = new Arendelle(code);
 		
 		
 		//////////////////
@@ -51,9 +49,8 @@ public class MasterEvaluator {
 		// TODO: Set IDE title
 		
 		// running
-		arendelle = Kernel.eval(arendelle);
+		Kernel.eval(arendelle, screen);
 		
-		return arendelle.screen;
 	}
 	
 	public static String removeComments(String code) {

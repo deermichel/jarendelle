@@ -17,7 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle;
+package org.arendelle.java;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,7 +30,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import de.mh.jarendelle.engine.MasterEvaluator;
+import org.arendelle.java.engine.CodeScreen;
+import org.arendelle.java.engine.MasterEvaluator;
 
 public class Main {
 
@@ -113,20 +114,15 @@ class ArendelleDemo implements KeyListener {
 	//compile code
 	private void compile(String code) {
 		
-		//format code
-		code = code.toLowerCase();
-		code = code.replaceAll("#width", String.valueOf(cellsX));
-		code = code.replaceAll("#i", String.valueOf(cellsX));
-		code = code.replaceAll("#height", String.valueOf(cellsY));
-		code = code.replaceAll("#j", String.valueOf(cellsY));
-		code = code.replaceAll(" ", "");
+		CodeScreen screen = new CodeScreen(80, 24);
 		
 		try {
-			result = MasterEvaluator.evaluate(code, cellsX, cellsY);
+			MasterEvaluator.evaluate(code, screen);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.toString());
 		}
+		
+		result = screen.screen;
 		
 		/*for (int i = 0; i < code.length(); i++) {
 			

@@ -17,64 +17,37 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle.engine;
+package org.arendelle.java.engine;
 
 import java.util.Random;
 
-public class Arendelle {
-
-	public String code;
-	public int i;
-
+public class CodeScreen {
+	
 	public int x;
 	public int y;
 	public int z;
-	public int color;
 	public int width;
 	public int height;
-	public int screen[][];
+	public int depth;
+	public int color;
 	public Random rand;
+	public int screen[][];
 	
-	@Override
-	public String toString() {
-		return code;
-	}
-	
-	public Arendelle(String code, int width, int height) {
-		
-		this.code = code;
-		this.i = 0;
-		
+	public CodeScreen(int width, int height) {
 		
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
 		
-		this.color = 0;
-		
 		this.width = width;
 		this.height = height;
-		this.screen = new int[width][height];
+		this.depth = 0;
+		
+		this.color = 0;
 		
 		this.rand = new Random();
 		
-	}
-	
-	public Arendelle(Arendelle arendelle) {
-		
-		this.code = arendelle.code;
-		this.i = arendelle.i;
-		
-		
-		this.x = arendelle.x;
-		this.y = arendelle.y;
-		this.z = arendelle.z;
-		
-		this.width = arendelle.width;
-		this.height = arendelle.height;
-		this.screen = arendelle.screen;
-		
-		this.rand = arendelle.rand;
+		this.screen = new int[width][height];
 		
 	}
 	

@@ -17,7 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-package de.mh.jarendelle.engine;
+package org.arendelle.java.engine;
 
 import java.util.Arrays;
 
@@ -27,12 +27,10 @@ public class Kernel {
 	/**
 	 * eval is the main core of the language where it evaluates the given code.
 	 * @param arendelle a given Arendelle instance
-	 * @return the new Arendelle instance
+	 * @param screen Screen.
 	 * @throws Exception
 	 */
-	public static Arendelle eval(Arendelle arendelle) throws Exception {
-		
-		System.out.println(arendelle);
+	public static void eval(Arendelle arendelle, CodeScreen screen) throws Exception {
 		
 		/*
 		 *  So what we do is we read the code char-by-char and run the commands
@@ -58,7 +56,7 @@ public class Kernel {
 			//////////////////////////////////////////////////
 			
 			case '[':
-				arendelle = LoopParser.parse(arendelle);
+				LoopParser.parse(arendelle, screen);
 				break;
 				
 			/*case '!':
@@ -79,36 +77,36 @@ public class Kernel {
 			//////////////////////////////////////////////////
 				
 			case 'p':
-				if (arendelle.x >= 0 && arendelle.y >= 0 && arendelle.x < arendelle.width && arendelle.y < arendelle.height) {
-					arendelle.screen[arendelle.x][arendelle.y] = arendelle.color + 1;
+				if (screen.x >= 0 && screen.y >= 0 && screen.x < screen.width && screen.y < screen.height) {
+					screen.screen[screen.x][screen.y] = screen.color + 1;
 				}
 				break;
 				
 			case 'u':
-				arendelle.y--;
+				screen.y--;
 				break;
 				
 			case 'd':
-				arendelle.y++;
+				screen.y++;
 				break;
 				
 			case 'r':
-				arendelle.x++;
+				screen.x++;
 				break;
 				
 			case 'l':
-				arendelle.x--;
+				screen.x--;
 				break;
 				
 			/*case 'e':
 				break;*/
 				
 			case 'n':
-				arendelle.color = (arendelle.color + 1) % 4;
+				screen.color = (screen.color + 1) % 4;
 				break;
 				
 			case 'c':
-				for (int[] row : arendelle.screen) Arrays.fill(row, 0);
+				for (int[] row : screen.screen) Arrays.fill(row, 0);
 				break;
 				
 			case 'w':
@@ -120,8 +118,8 @@ public class Kernel {
 				break;*/
 				
 			case 'i':
-				arendelle.x = 0;
-				arendelle.y = 0;
+				screen.x = 0;
+				screen.y = 0;
 				break;
 				
 				
@@ -164,7 +162,6 @@ public class Kernel {
 			
 		}
 		
-		return arendelle;
 	}
 	
 }

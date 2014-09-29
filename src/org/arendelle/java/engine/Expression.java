@@ -24,7 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package de.mh.jarendelle.engine;
+package org.arendelle.java.engine;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

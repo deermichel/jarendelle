@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 package org.arendelle.java.engine;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 /** Arendelles Kernel which evaluates, reads and runs the code. */
 public class Kernel {
@@ -28,9 +29,10 @@ public class Kernel {
 	 * eval is the main core of the language where it evaluates the given code.
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
+	 * @param spaces Spaces.
 	 * @throws Exception
 	 */
-	public static void eval(Arendelle arendelle, CodeScreen screen) throws Exception {
+	public static void eval(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) throws Exception {
 		
 		/*
 		 *  So what we do is we read the code char-by-char and run the commands
@@ -56,7 +58,7 @@ public class Kernel {
 			//////////////////////////////////////////////////
 			
 			case '[':
-				LoopParser.parse(arendelle, screen);
+				LoopParser.parse(arendelle, screen, spaces);
 				break;
 				
 			/*case '!':
@@ -66,10 +68,17 @@ public class Kernel {
 				break;
 				
 			case '{':
-				break;
+				break;*/
 				
 			case '\'':
-				break;*/
+				String title = "";
+				for (int i = arendelle.i + 1; arendelle.code.charAt(i) != '\''; i++) {
+					title += arendelle.code.charAt(i);
+					arendelle.i = i;
+				}
+				screen.title = Spaces.replace(title, screen, spaces);
+				arendelle.i++;
+				break;
 			
 				
 			//////////////////////////////////////////////////
@@ -98,8 +107,9 @@ public class Kernel {
 				screen.x--;
 				break;
 				
-			/*case 'e':
-				break;*/
+			case 'e':
+				LoopParser.breakLoop = true;
+				break;
 				
 			case 'n':
 				screen.color = (screen.color + 1) % 4;
@@ -114,7 +124,7 @@ public class Kernel {
 				break;
 				
 			/*case 's':
-			    TODO: Why?
+			    TODO: Implement command
 				break;*/
 				
 			case 'i':
@@ -146,11 +156,11 @@ public class Kernel {
 				throw new Exception("Unexpected grammar divider ',' found.");*/
 				
 			/*case '\n':
-				TODO: Why?
+				TODO: Implement line counter
 				break;*/
 				
 			default:
-				throw new Exception("Unknown command: '" + command + "'");
+				if (command != ';') throw new Exception("Unknown command: '" + command + "'");
 				
 			}
 			

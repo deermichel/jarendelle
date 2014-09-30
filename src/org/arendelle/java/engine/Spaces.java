@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,13 +19,16 @@
 
 package org.arendelle.java.engine;
 
-public class Variables {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class Spaces {
 
 	/** Replaces all variables in the given expression with their values.
 	 * @param expression Expression.
 	 * @return The final expression.
 	 */
-	public static String replace(String expression, CodeScreen screen) {
+	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
 		
 		expression = expression.replaceAll("#x", String.valueOf(screen.x));
 		expression = expression.replaceAll("#y", String.valueOf(screen.y));
@@ -39,6 +42,10 @@ public class Variables {
 		expression = expression.replaceAll("#depth", String.valueOf(screen.depth));
 		expression = expression.replaceAll("#n", String.valueOf(screen.color));
 		expression = expression.replaceAll("#rnd", String.valueOf(screen.rand.nextDouble()));
+		
+		for (String name : spaces.keySet()) {
+			expression = expression.replaceAll('@' + name, spaces.get(name));
+		}
 		
 		return expression;
 	}

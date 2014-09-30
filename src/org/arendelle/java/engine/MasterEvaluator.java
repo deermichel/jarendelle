@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 //
 
 package org.arendelle.java.engine;
+
+import java.util.HashMap;
 
 public class MasterEvaluator {
 	
@@ -38,6 +40,9 @@ public class MasterEvaluator {
 		// replace upper-case letters with the lower-case ones
 		code = code.toLowerCase();
 		
+		// setting up the spaces
+		HashMap<String, String> spaces = new HashMap<>();
+		
 		// setting up an Arendelle instance
 		Arendelle arendelle = new Arendelle(code);
 		
@@ -46,10 +51,8 @@ public class MasterEvaluator {
 		/// EVALUATING ///
 		//////////////////
 		
-		// TODO: Set IDE title
-		
 		// running
-		Kernel.eval(arendelle, screen);
+		Kernel.eval(arendelle, screen, spaces);
 		
 	}
 	

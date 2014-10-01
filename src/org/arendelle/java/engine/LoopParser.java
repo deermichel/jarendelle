@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,14 +19,24 @@
 
 package org.arendelle.java.engine;
 
+import java.util.HashMap;
+
 public class LoopParser {
+	
+	/** Timout of while-loops (in milliseconds) */
+	public static final int TIMEOUT = 1000;
+	
+	/** If true the actual loop will be aborted */
+	public static boolean breakLoop = false;
+	
 
 	/** This is the LoopParser kernel, where it parses and runs a loop.
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
+	 * @param spaces Spaces.
 	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) throws Exception {
 		
 		String mathExpr = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {
@@ -59,19 +69,26 @@ public class LoopParser {
 		// determine if expression is a number (for-loop) or a boolean (while-loop)
 		if (mathExpr.contains("=") || mathExpr.contains("<") || mathExpr.contains(">") || mathExpr.contains("&") || mathExpr.contains("|")) {
 			
-			while (new Expression(Variables.replace(mathExpr, screen)).eval().intValue() != 0) {
+			long timestamp = System.currentTimeMillis();
+			
+			while (new Expression(Spaces.replace(mathExpr, screen, spaces)).eval().intValue() != 0) {
 				loopArendelle.i = 0;
-				Kernel.eval(loopArendelle, screen);
+				Kernel.eval(loopArendelle, screen, spaces);
+				if (System.currentTimeMillis() - timestamp > TIMEOUT) throw new Exception("While timeout expired.");
+				if (breakLoop) break;
 			}
 			
 		} else {
 			
-			for (int i = 0; i < new Expression(Variables.replace(mathExpr, screen)).eval().intValue(); i++) {
+			for (int i = 0; i < new Expression(Spaces.replace(mathExpr, screen, spaces)).eval().intValue(); i++) {
 				loopArendelle.i = 0;
-				Kernel.eval(loopArendelle, screen);
+				Kernel.eval(loopArendelle, screen, spaces);
+				if (breakLoop) break;
 			}
 			
 		}
+		
+		breakLoop = false;
 		
 	}
 	

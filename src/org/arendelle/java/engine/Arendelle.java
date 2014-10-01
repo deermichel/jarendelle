@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by

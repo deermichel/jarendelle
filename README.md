@@ -1,14 +1,26 @@
+<<<<<<< HEAD
 
 ![](https://raw.githubusercontent.com/pmkary/pmkary.github.io/master/GitHubWideImages/Arendelle/JArendelle/screenshotubuntu.png)
 
 # JArendelle
 Java port of Arendelle under development by [Micha Henselmann](https://raw.githubusercontent.com/pmkary/pmkary.github.io/master/GitHubWideImages/Arendelle/JArendelle/screenshotubuntu.png)
+=======
+![](https://raw.githubusercontent.com/pmkary/pmkary.github.io/master/GitHubWideImages/Arendelle/JArendelle/screenshotubuntu.png)
+
+# JArendelle
+Java port of Arendelle under development by [Micha Hanselmann](https://github.com/DeerMichel/)
+>>>>>>> FETCH_HEAD
 
 ## License
 
 ```
+<<<<<<< HEAD
 JArendelle
 Copyright (C) 2014 Micha Henselmann <h@arendelle.org>
+=======
+JArendelle - Java Portation of the Arendelle Language
+Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
+>>>>>>> FETCH_HEAD
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,4 +34,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> FETCH_HEAD

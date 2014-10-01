@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ public class CodeScreen {
 	public int color;
 	public Random rand;
 	public int screen[][];
+	public String title;
 	
 	public CodeScreen(int width, int height) {
 		
@@ -48,6 +49,7 @@ public class CodeScreen {
 		this.rand = new Random();
 		
 		this.screen = new int[width][height];
+		this.title = "JArendelle";
 		
 	}
 	

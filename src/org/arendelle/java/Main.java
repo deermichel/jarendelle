@@ -1,7 +1,7 @@
 
 //
 //  JArendelle - Java Portation of the Arendelle Language
-//  Copyright (c) 2014 mh
+//  Copyright (c) 2014 Micha Hanselmann <h@arendelle.org>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ public class Main {
 class ArendelleDemo implements KeyListener {
 
 	//GUI objects
+	JFrame window;
 	JTextField textCode = new JTextField(30);
 	Panel panelResult = new Panel();
 	
@@ -74,8 +75,8 @@ class ArendelleDemo implements KeyListener {
 	int height = 0;
 	int cellWidth = 0;
 	int cellHeight = 0;
-	final int cellsX = 80;
-	final int cellsY = 24;
+	final int cellsX = 40;
+	final int cellsY = 30;
 	int result[][] = new int[cellsX][cellsY];
 	
 
@@ -87,7 +88,7 @@ class ArendelleDemo implements KeyListener {
 	//constructor
 	public ArendelleDemo() {
 
-		JFrame window = new JFrame("Arendelle-Demo");
+		window = new JFrame("JArendelle");
 		//window.setSize(800, 600);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
@@ -114,7 +115,7 @@ class ArendelleDemo implements KeyListener {
 	//compile code
 	private void compile(String code) {
 		
-		CodeScreen screen = new CodeScreen(80, 24);
+		CodeScreen screen = new CodeScreen(cellsX, cellsY);
 		
 		try {
 			MasterEvaluator.evaluate(code, screen);
@@ -123,6 +124,7 @@ class ArendelleDemo implements KeyListener {
 		}
 		
 		result = screen.screen;
+		window.setTitle(screen.title);
 		
 		/*for (int i = 0; i < code.length(); i++) {
 			

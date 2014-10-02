@@ -59,7 +59,7 @@ public class Main {
  * @version PreAlpha
  */
 class ArendelleDemo implements KeyListener {
-
+	
 	//GUI objects
 	JFrame window;
 	JTextField textCode = new JTextField(30);

@@ -37,9 +37,6 @@ public class MasterEvaluator {
 		// remove spaces for faster performance
 		code = MasterEvaluator.removeSpaces(code);
 		
-		// replace upper-case letters with the lower-case ones
-		code = code.toLowerCase();
-		
 		// setting up the spaces
 		HashMap<String, String> spaces = new HashMap<>();
 		
@@ -103,12 +100,23 @@ public class MasterEvaluator {
 		return codeWithoutComments;
 	}
 	
-	public static String removeSpaces(String code) {
+	public static String removeSpaces(String code) throws Exception {
 
 		String codeWithoutSpaces = "";
 		
-		for (char c : code.toCharArray()) {
-			if (c != ' ') codeWithoutSpaces += c;
+		for (int i = 0; i < code.length(); i++) {
+			
+			// exclude window titles
+			if (code.charAt(i) == '\'') {
+				do {
+					codeWithoutSpaces += code.charAt(i);
+					i++;
+					if (i > code.length() - 1) throw new Exception("Syntax error, insert ''' to complete statement.");
+				} while (code.charAt(i) != '\'');
+			}
+			
+			if (code.charAt(i) != ' ') codeWithoutSpaces += code.charAt(i);
+			
 		}
 		
 		return codeWithoutSpaces;

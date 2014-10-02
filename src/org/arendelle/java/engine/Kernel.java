@@ -44,7 +44,8 @@ public class Kernel {
 		
 		while (arendelle.i < arendelle.code.length()) {
 			
-			command = arendelle.code.charAt(arendelle.i);
+			// get command and replace upper-case letters with the lower-case one
+			command = arendelle.code.toLowerCase().charAt(arendelle.i);
 			
 			
 			////////////////////////
@@ -150,10 +151,10 @@ public class Kernel {
 				throw new Exception("Unexpected function header found.");
 				
 			case '>':
-				throw new Exception("Unexpected function header token '>' found.");
+				throw new Exception("Unexpected function header token '>' found.");*/
 				
 			case ',':
-				throw new Exception("Unexpected grammar divider ',' found.");*/
+				throw new Exception("Unexpected grammar divider ',' found.");
 				
 			/*case '\n':
 				TODO: Implement line counter

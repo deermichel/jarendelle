@@ -480,7 +480,49 @@ public class Expression {
 	 *            <code>"sin(y)>0 & max(z, 3)>3"</code>
 	 */
 	public Expression(String expression) {
-		this.expression = expression;
+		
+		this.expression = expression.toLowerCase();
+		
+		
+		//////////////////////////////////////
+		///  Arendelle specific operators  ///
+		//////////////////////////////////////
+		
+		addOperator(new Operator("×", 30, true) {
+			@Override
+			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
+				return v1.multiply(v2, mc);
+			}
+		});
+		addOperator(new Operator("÷", 30, true) {
+			@Override
+			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
+				return v1.divide(v2, mc);
+			}
+		});
+		
+		addOperator(new Operator("and", 4, false) {
+			@Override
+			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
+				boolean b1 = !v1.equals(BigDecimal.ZERO);
+				boolean b2 = !v2.equals(BigDecimal.ZERO);
+				return b1 && b2 ? BigDecimal.ONE : BigDecimal.ZERO;
+			}
+		});
+		addOperator(new Operator("or", 2, false) {
+			@Override
+			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
+				boolean b1 = !v1.equals(BigDecimal.ZERO);
+				boolean b2 = !v2.equals(BigDecimal.ZERO);
+				return b1 || b2 ? BigDecimal.ONE : BigDecimal.ZERO;
+			}
+		});
+		
+		
+		//////////////////////////////////////
+		///       Standard operators       ///
+		//////////////////////////////////////
+		
 		addOperator(new Operator("+", 20, true) {
 			@Override
 			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
@@ -608,7 +650,7 @@ public class Expression {
 			}
 		});
 
-		addFunction(new Function("NOT", 1) {
+		addFunction(new Function("not", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				boolean zero = parameters.get(0).compareTo(BigDecimal.ZERO) == 0;
@@ -616,7 +658,7 @@ public class Expression {
 			}
 		});
 
-		addFunction(new Function("IF", 3) {
+		/*addFunction(new Function("if", 3) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				boolean isTrue = !parameters.get(0).equals(BigDecimal.ZERO);
@@ -624,14 +666,15 @@ public class Expression {
 			}
 		});
 
-		addFunction(new Function("RANDOM", 0) {
+		addFunction(new Function("random", 0) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.random();
 				return new BigDecimal(d, mc);
 			}
-		});
-		addFunction(new Function("SIN", 1) {
+		});*/
+		
+		addFunction(new Function("sin", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.sin(Math.toRadians(parameters.get(0)
@@ -639,7 +682,7 @@ public class Expression {
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("COS", 1) {
+		addFunction(new Function("cos", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.cos(Math.toRadians(parameters.get(0)
@@ -647,7 +690,7 @@ public class Expression {
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("TAN", 1) {
+		addFunction(new Function("tan", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.tan(Math.toRadians(parameters.get(0)
@@ -655,42 +698,42 @@ public class Expression {
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("SINH", 1) {
+		addFunction(new Function("sinh", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.sinh(parameters.get(0).doubleValue());
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("COSH", 1) {
+		addFunction(new Function("cosh", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.cosh(parameters.get(0).doubleValue());
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("TANH", 1) {
+		addFunction(new Function("tanh", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.tanh(parameters.get(0).doubleValue());
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("RAD", 1) {
+		addFunction(new Function("rad", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.toRadians(parameters.get(0).doubleValue());
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("DEG", 1) {
+		addFunction(new Function("deg", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.toDegrees(parameters.get(0).doubleValue());
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("MAX", 2) {
+		addFunction(new Function("max", 2) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				BigDecimal v1 = parameters.get(0);
@@ -698,7 +741,7 @@ public class Expression {
 				return v1.compareTo(v2) > 0 ? v1 : v2;
 			}
 		});
-		addFunction(new Function("MIN", 2) {
+		addFunction(new Function("min", 2) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				BigDecimal v1 = parameters.get(0);
@@ -706,20 +749,20 @@ public class Expression {
 				return v1.compareTo(v2) < 0 ? v1 : v2;
 			}
 		});
-		addFunction(new Function("ABS", 1) {
+		addFunction(new Function("abs", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				return parameters.get(0).abs(mc);
 			}
 		});
-		addFunction(new Function("LOG", 1) {
+		addFunction(new Function("log", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				double d = Math.log(parameters.get(0).doubleValue());
 				return new BigDecimal(d, mc);
 			}
 		});
-		addFunction(new Function("ROUND", 2) {
+		addFunction(new Function("round", 2) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				BigDecimal toRound = parameters.get(0);
@@ -727,21 +770,21 @@ public class Expression {
 				return toRound.setScale(precision, mc.getRoundingMode());
 			}
 		});
-		addFunction(new Function("FLOOR", 1) {
+		addFunction(new Function("floor", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				BigDecimal toRound = parameters.get(0);
 				return toRound.setScale(0, RoundingMode.FLOOR);
 			}
 		});
-		addFunction(new Function("CEILING", 1) {
+		addFunction(new Function("ceiling", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				BigDecimal toRound = parameters.get(0);
 				return toRound.setScale(0, RoundingMode.CEILING);
 			}
 		});
-		addFunction(new Function("SQRT", 1) {
+		addFunction(new Function("sqrt", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {
 				/*
@@ -774,9 +817,8 @@ public class Expression {
 			}
 		});
 
-		variables.put("PI", PI);
-		variables.put("TRUE", BigDecimal.ONE);
-		variables.put("FALSE", BigDecimal.ZERO);
+		variables.put("true", BigDecimal.ONE);
+		variables.put("false", BigDecimal.ZERO);
 
 	}
 

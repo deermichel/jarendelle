@@ -66,10 +66,11 @@ public class Kernel {
 				break;
 				
 			case '(':
-				break;
+				break;*/
 				
 			case '{':
-				break;*/
+				ConditionParser.parse(arendelle, screen, spaces);
+				break;
 				
 			case '\'':
 				String title = "";
@@ -77,7 +78,7 @@ public class Kernel {
 					title += arendelle.code.charAt(i);
 					arendelle.i = i;
 				}
-				screen.title = Spaces.replace(title, screen, spaces);
+				screen.title = Replacer.replace(title, screen, spaces);
 				arendelle.i++;
 				break;
 			
@@ -141,7 +142,7 @@ public class Kernel {
 			case ']':
 				throw new Exception("Unexpected loop token ']' found.");
 				
-			/*case ')':
+			case ')':
 				throw new Exception("Unexpected variable token ')' found.");
 				
 			case '}':
@@ -151,7 +152,7 @@ public class Kernel {
 				throw new Exception("Unexpected function header found.");
 				
 			case '>':
-				throw new Exception("Unexpected function header token '>' found.");*/
+				throw new Exception("Unexpected function header token '>' found.");
 				
 			case ',':
 				throw new Exception("Unexpected grammar divider ',' found.");
@@ -161,7 +162,7 @@ public class Kernel {
 				break;*/
 				
 			default:
-				if (command != ';') throw new Exception("Unknown command: '" + command + "'");
+				if (command != ' ' && command != ';') throw new Exception("Unknown command: '" + command + "'");
 				
 			}
 			

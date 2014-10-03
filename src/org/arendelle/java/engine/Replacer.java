@@ -2,17 +2,16 @@ package org.arendelle.java.engine;
 
 import java.util.HashMap;
 
-public class Spaces {
+public class Replacer {
 
-	/** Replaces all spaces (variables) in the given expression with their values.
+	/** Replaces all variables in the given expression with their values.
 	 * @param expression Expression.
 	 * @return The final expression.
 	 */
 	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
 		
-		for (String name : spaces.keySet()) {
-			expression = expression.replaceAll('@' + name, spaces.get(name));
-		}
+		expression = Sources.replace(expression, screen);
+		expression = Spaces.replace(expression, screen, spaces);
 		
 		return expression;
 	}

@@ -38,9 +38,9 @@ public class LoopParser {
 	 */
 	public static void parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) throws Exception {
 		
-		String mathExpr = "";
+		String expression = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {
-			mathExpr += arendelle.code.charAt(i);
+			expression += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
 		
@@ -67,11 +67,12 @@ public class LoopParser {
 		Arendelle loopArendelle = new Arendelle(loopCode);
 		
 		// determine if expression is a number (for-loop) or a boolean (while-loop)
-		if (mathExpr.contains("=") || mathExpr.contains("<") || mathExpr.contains(">") || mathExpr.contains("&") || mathExpr.contains("|")) {
+		if (expression.contains("=") || expression.contains("<") || expression.contains(">") || expression.contains("&") || expression.contains("|") || 
+				expression.contains("true") || expression.contains("false") || expression.contains("and") || expression.contains("or") || expression.contains("not")) {
 			
 			long timestamp = System.currentTimeMillis();
 			
-			while (new Expression(Spaces.replace(mathExpr, screen, spaces)).eval().intValue() != 0) {
+			while (new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue() != 0) {
 				loopArendelle.i = 0;
 				Kernel.eval(loopArendelle, screen, spaces);
 				if (System.currentTimeMillis() - timestamp > TIMEOUT) throw new Exception("While timeout expired.");
@@ -80,7 +81,7 @@ public class LoopParser {
 			
 		} else {
 			
-			for (int i = 0; i < new Expression(Spaces.replace(mathExpr, screen, spaces)).eval().intValue(); i++) {
+			for (int i = 0; i < new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue(); i++) {
 				loopArendelle.i = 0;
 				Kernel.eval(loopArendelle, screen, spaces);
 				if (breakLoop) break;

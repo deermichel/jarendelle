@@ -45,17 +45,21 @@ public class LoopParser {
 		}
 		
 		String loopCode = "";
-		int nestedLoops = 0;
-		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedLoops == 0); i++) {
+		int nestedGrammars = 0;
+		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {
 			
 			loopCode += arendelle.code.charAt(i);
 			
 			switch (arendelle.code.charAt(i)) {
 			case '[':
-				nestedLoops++;
+			case '{':
+			case '(':
+				nestedGrammars++;
 				break;
 			case ']':
-				nestedLoops--;
+			case '}':
+			case ')':
+				nestedGrammars--;
 				break;
 			}
 			

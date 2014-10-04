@@ -19,17 +19,21 @@ public class ConditionParser {
 		}
 		
 		String trueCode = "";
-		int nestedConditions = 0;
-		for (int i = arendelle.i + 2; !((arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ',') && nestedConditions == 0); i++) {
+		int nestedGrammars = 0;
+		for (int i = arendelle.i + 2; !((arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ',') && nestedGrammars == 0); i++) {
 			
 			trueCode += arendelle.code.charAt(i);
 			
 			switch (arendelle.code.charAt(i)) {
+			case '[':
 			case '{':
-				nestedConditions++;
+			case '(':
+				nestedGrammars++;
 				break;
+			case ']':
 			case '}':
-				nestedConditions--;
+			case ')':
+				nestedGrammars--;
 				break;
 			}
 			
@@ -38,16 +42,20 @@ public class ConditionParser {
 		
 		String falseCode = "";
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
-			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == '}' && nestedConditions == 0); i++) {
+			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == '}' && nestedGrammars == 0); i++) {
 				
 				falseCode += arendelle.code.charAt(i);
 				
 				switch (arendelle.code.charAt(i)) {
+				case '[':
 				case '{':
-					nestedConditions++;
+				case '(':
+					nestedGrammars++;
 					break;
+				case ']':
 				case '}':
-					nestedConditions--;
+				case ')':
+					nestedGrammars--;
 					break;
 				}
 				

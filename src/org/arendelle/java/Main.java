@@ -23,9 +23,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -58,12 +64,13 @@ public class Main {
  * @author mh
  * @version PreAlpha
  */
-class ArendelleDemo implements KeyListener {
+class ArendelleDemo implements KeyListener, ActionListener {
 	
 	//GUI objects
 	JFrame window;
 	JTextField textCode = new JTextField(30);
 	Panel panelResult = new Panel();
+	JButton buttonFile = new JButton("File...");
 	
 	//pointer
 	int x = 0;
@@ -95,12 +102,14 @@ class ArendelleDemo implements KeyListener {
 		
 		//textCode.addActionListener(this);
 		textCode.addKeyListener(this);
+		buttonFile.addActionListener(this);
 		panelResult.setPreferredSize(new Dimension(800, 600));
 		
 		window.setLayout(new BorderLayout());
 		
 		window.add(panelResult, BorderLayout.NORTH);
 		window.add(textCode, BorderLayout.SOUTH);
+		window.add(buttonFile, BorderLayout.LINE_END);
 		
 		window.pack();
 		window.setVisible(true);
@@ -279,6 +288,46 @@ class ArendelleDemo implements KeyListener {
 		if (e.getSource() == textCode) {
 			compile(textCode.getText());
 			panelResult.repaint();
+		}
+		
+	}
+
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if (e.getSource()==buttonFile) {
+			
+			//String filePath = JOptionPane.showInputDialog("Enter file path");
+			JFileChooser fc = new JFileChooser();
+			fc.showOpenDialog(null);
+			
+			try {
+				
+				
+				FileReader fr = new FileReader(fc.getSelectedFile());
+				BufferedReader reader = new BufferedReader(fr);
+				
+				String line = "";
+				String code = "";
+				
+				while ((line = reader.readLine()) != null) {
+					code += line + '\n';
+				}
+				
+				compile(code);
+				panelResult.repaint();
+				
+				reader.close();
+				fr.close();
+
+				
+			} catch (Exception e1) {
+				System.err.println(e1.toString());
+			}
+			
+			
 		}
 		
 	}

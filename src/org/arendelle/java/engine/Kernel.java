@@ -63,10 +63,11 @@ public class Kernel {
 				break;
 				
 			/*case '!':
-				break;
+				break;*/
 				
 			case '(':
-				break;*/
+				Spaces.parse(arendelle, screen, spaces);
+				break;
 				
 			case '{':
 				ConditionParser.parse(arendelle, screen, spaces);
@@ -162,7 +163,7 @@ public class Kernel {
 				break;*/
 				
 			default:
-				if (command != ' ' && command != ';') throw new Exception("Unknown command: '" + command + "'");
+				if (command != ' ' && command != ';' && command != '\n') throw new Exception("Unknown command: '" + command + "'");
 				
 			}
 			

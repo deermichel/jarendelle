@@ -38,9 +38,22 @@ public class Sources {
 		expression = expression.replaceAll("#k", String.valueOf(screen.z));
 		expression = expression.replaceAll("#depth", String.valueOf(screen.depth));
 		expression = expression.replaceAll("#n", String.valueOf(screen.color));
-		expression = expression.replaceAll("#rnd", String.valueOf(screen.rand.nextDouble()));
+		//expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
 		
 		return expression;
+	}
+	
+	/** Generates a random number in the format of "0.XXXXX"
+	 * @param screen Screen.
+	 * @return The generated number.
+	 */
+	public static String RNDGenerator(CodeScreen screen) {
+		
+		String number = "0.";
+		
+		for (int i = 0; i < 5; i++) number += String.valueOf(screen.rand.nextInt(10));
+		
+		return number;
 	}
 	
 }

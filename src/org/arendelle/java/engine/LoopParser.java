@@ -44,6 +44,9 @@ public class LoopParser {
 			arendelle.i = i;
 		}
 		
+		// TODO: Find a final solution
+		expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
+		
 		String loopCode = "";
 		int nestedGrammars = 0;
 		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {

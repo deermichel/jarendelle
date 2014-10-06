@@ -163,7 +163,7 @@ public class Kernel {
 				break;*/
 				
 			default:
-				if (command != ' ' && command != ';' && command != '\n') throw new Exception("Unknown command: '" + command + "'");
+				if (command != ' ' && command != ';' && command != '\n' && command != '\t') throw new Exception("Unknown command: '" + command + "'");
 				
 			}
 			

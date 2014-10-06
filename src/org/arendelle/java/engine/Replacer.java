@@ -9,7 +9,7 @@ public class Replacer {
 	 * @return The final expression.
 	 */
 	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
-		
+
 		expression = Sources.replace(expression, screen);
 		expression = Spaces.replace(expression, screen, spaces);
 		

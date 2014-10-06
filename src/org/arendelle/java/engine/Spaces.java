@@ -39,6 +39,8 @@ public class Spaces {
 			}
 		}
 		
+		expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
+		
 		if (expression == "") {
 			
 			//spaces.put(name, TODO: User input));

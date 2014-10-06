@@ -18,6 +18,8 @@ public class ConditionParser {
 			arendelle.i = i;
 		}
 		
+		expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
+		
 		String trueCode = "";
 		int nestedGrammars = 0;
 		for (int i = arendelle.i + 2; !((arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ',') && nestedGrammars == 0); i++) {

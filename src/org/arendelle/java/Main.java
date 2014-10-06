@@ -34,7 +34,10 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
 
 import org.arendelle.java.engine.CodeScreen;
 import org.arendelle.java.engine.MasterEvaluator;
@@ -68,7 +71,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	
 	//GUI objects
 	JFrame window;
-	JTextField textCode = new JTextField(30);
+	JTextArea textCode = new JTextArea(0, 35);
 	Panel panelResult = new Panel();
 	JButton buttonFile = new JButton("File...");
 	
@@ -107,9 +110,12 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		
 		window.setLayout(new BorderLayout());
 		
-		window.add(panelResult, BorderLayout.NORTH);
-		window.add(textCode, BorderLayout.SOUTH);
-		window.add(buttonFile, BorderLayout.LINE_END);
+		JScrollPane scrollPane = new JScrollPane(textCode, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		
+		window.add(panelResult, BorderLayout.WEST);
+		window.add(scrollPane, BorderLayout.EAST);
+		window.add(buttonFile, BorderLayout.SOUTH);
 		
 		window.pack();
 		window.setVisible(true);
@@ -237,15 +243,17 @@ class ArendelleDemo implements KeyListener, ActionListener {
 					switch (result[x][y]) {
 					
 					case 0:
-						break;
-						
-					case 1:
 						g.setColor(Color.BLACK);
 						g.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
 						break;
 						
+					case 1:
+						g.setColor(Color.WHITE);
+						g.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+						break;
+						
 					case 2:
-						g.setColor(Color.DARK_GRAY);
+						g.setColor(Color.LIGHT_GRAY);
 						g.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
 						break;
 						
@@ -255,7 +263,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 						break;
 						
 					case 4:
-						g.setColor(Color.LIGHT_GRAY);
+						g.setColor(Color.DARK_GRAY);
 						g.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
 						break;
 					

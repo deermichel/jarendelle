@@ -1,6 +1,6 @@
 package org.arendelle.java.engine;
 
-import java.util.HashMap;
+import java.util.SortedMap;
 
 public class Spaces {
 
@@ -8,7 +8,7 @@ public class Spaces {
 	 * @param expression Expression.
 	 * @return The final expression.
 	 */
-	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
+	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		for (String name : spaces.keySet()) {
 			expression = expression.replaceAll('@' + name, spaces.get(name));
@@ -23,7 +23,7 @@ public class Spaces {
 	 * @param spaces Spaces.
 	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 		
 		String name = "";
 		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {

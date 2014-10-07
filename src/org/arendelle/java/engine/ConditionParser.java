@@ -1,6 +1,6 @@
 package org.arendelle.java.engine;
 
-import java.util.HashMap;
+import java.util.SortedMap;
 
 public class ConditionParser {
 
@@ -10,7 +10,7 @@ public class ConditionParser {
 	 * @param spaces Spaces.
 	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 		
 		String expression = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {

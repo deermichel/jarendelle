@@ -20,7 +20,7 @@
 package org.arendelle.java.engine;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.SortedMap;
 
 /** Arendelles Kernel which evaluates, reads and runs the code. */
 public class Kernel {
@@ -32,7 +32,7 @@ public class Kernel {
 	 * @param spaces Spaces.
 	 * @throws Exception
 	 */
-	public static void eval(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) throws Exception {
+	public static void eval(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 		
 		/*
 		 *  So what we do is we read the code char-by-char and run the commands

@@ -1,6 +1,6 @@
 package org.arendelle.java.engine;
 
-import java.util.HashMap;
+import java.util.SortedMap;
 
 public class Replacer {
 
@@ -8,7 +8,7 @@ public class Replacer {
 	 * @param expression Expression.
 	 * @return The final expression.
 	 */
-	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
+	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
 
 		expression = Sources.replace(expression, screen);
 		expression = Spaces.replace(expression, screen, spaces);

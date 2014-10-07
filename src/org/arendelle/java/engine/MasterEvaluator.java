@@ -19,7 +19,9 @@
 
 package org.arendelle.java.engine;
 
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class MasterEvaluator {
 	
@@ -38,7 +40,16 @@ public class MasterEvaluator {
 		code = MasterEvaluator.removeSpaces(code);
 		
 		// setting up the spaces
-		HashMap<String, String> spaces = new HashMap<>();
+		SortedMap<String, String> spaces = 
+				new TreeMap<String, String>(new Comparator<String>() {
+					public int compare(String s1, String s2) {
+						int lengthComparison = s2.length() - s1.length();
+						if (lengthComparison != 0) {
+							return lengthComparison;
+						}
+						return s1.compareTo(s2);
+					}
+		});
 		
 		// setting up an Arendelle instance
 		Arendelle arendelle = new Arendelle(code);

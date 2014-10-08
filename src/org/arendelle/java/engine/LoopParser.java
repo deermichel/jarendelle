@@ -20,6 +20,7 @@
 package org.arendelle.java.engine;
 
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class LoopParser {
 	
@@ -44,8 +45,7 @@ public class LoopParser {
 			arendelle.i = i;
 		}
 		
-		// TODO: Find a final solution
-		expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
+		expression = Replacer.replaceRND(expression, screen);
 		
 		String loopCode = "";
 		int nestedGrammars = 0;
@@ -72,31 +72,37 @@ public class LoopParser {
 		arendelle.i++;
 		
 		Arendelle loopArendelle = new Arendelle(loopCode);
+		SortedMap<String, String> loopSpaces = new TreeMap<String, String>(spaces.comparator());
+		loopSpaces.putAll(spaces);
 		
 		// determine if expression is a number (for-loop) or a boolean (while-loop)
-		if (expression.contains("=") || expression.contains("<") || expression.contains(">") || expression.contains("&") || expression.contains("|") || 
-				expression.contains("true") || expression.contains("false") || expression.contains("and") || expression.contains("or") || expression.contains("not")) {
+		if (expression.contains("=") || expression.contains("<") || expression.contains(">") || expression.contains("true") || 
+				expression.contains("false") || expression.contains("and") || expression.contains("or") || expression.contains("not")) {
 			
 			long timestamp = System.currentTimeMillis();
 			
-			while (new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue() != 0) {
+			while (new Expression(Replacer.replace(expression, screen, loopSpaces)).eval().intValue() != 0) {
 				loopArendelle.i = 0;
-				Kernel.eval(loopArendelle, screen, spaces);
+				Kernel.eval(loopArendelle, screen, loopSpaces);
 				if (System.currentTimeMillis() - timestamp > TIMEOUT) throw new Exception("While timeout expired.");
 				if (breakLoop) break;
 			}
 			
 		} else {
 			
-			for (int i = 0; i < new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue(); i++) {
+			for (int i = 0; i < new Expression(Replacer.replace(expression, screen, loopSpaces)).eval().intValue(); i++) {
 				loopArendelle.i = 0;
-				Kernel.eval(loopArendelle, screen, spaces);
+				Kernel.eval(loopArendelle, screen, loopSpaces);
 				if (breakLoop) break;
 			}
 			
 		}
 		
 		breakLoop = false;
+		
+		for (String name : spaces.keySet()) {
+			spaces.put(name, loopSpaces.get(name));
+		}
 		
 	}
 	

@@ -39,7 +39,7 @@ public class Spaces {
 			}
 		}
 		
-		expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
+		expression = Replacer.replaceRND(expression, screen);
 		
 		if (expression == "") {
 			

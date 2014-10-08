@@ -62,8 +62,9 @@ public class Kernel {
 				LoopParser.parse(arendelle, screen, spaces);
 				break;
 				
-			/*case '!':
-				break;*/
+			case '!':
+				FunctionParser.parse(arendelle, screen, spaces);
+				break;
 				
 			case '(':
 				Spaces.parse(arendelle, screen, spaces);

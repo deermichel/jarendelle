@@ -1,6 +1,7 @@
 package org.arendelle.java.engine;
 
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class ConditionParser {
 
@@ -18,7 +19,7 @@ public class ConditionParser {
 			arendelle.i = i;
 		}
 		
-		expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
+		expression = Replacer.replaceRND(expression, screen);
 		
 		String trueCode = "";
 		int nestedGrammars = 0;
@@ -69,11 +70,17 @@ public class ConditionParser {
 		
 		Arendelle trueArendelle = new Arendelle(trueCode);
 		Arendelle falseArendelle = new Arendelle(falseCode);
+		SortedMap<String, String> conditionSpaces = new TreeMap<String, String>(spaces.comparator());
+		conditionSpaces.putAll(spaces);
 		
-		if (new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue() != 0) {
-			Kernel.eval(trueArendelle, screen, spaces);
+		if (new Expression(Replacer.replace(expression, screen, conditionSpaces)).eval().intValue() != 0) {
+			Kernel.eval(trueArendelle, screen, conditionSpaces);
 		} else {
-			Kernel.eval(falseArendelle, screen, spaces);
+			Kernel.eval(falseArendelle, screen, conditionSpaces);
+		}
+		
+		for (String name : spaces.keySet()) {
+			spaces.put(name, conditionSpaces.get(name));
 		}
 		
 	}

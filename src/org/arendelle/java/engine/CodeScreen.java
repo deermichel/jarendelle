@@ -33,8 +33,9 @@ public class CodeScreen {
 	public Random rand;
 	public int screen[][];
 	public String title;
+	public String mainPath;
 	
-	public CodeScreen(int width, int height) {
+	public CodeScreen(int width, int height, String mainPath) {
 		
 		this.x = 0;
 		this.y = 0;
@@ -50,6 +51,8 @@ public class CodeScreen {
 		
 		this.screen = new int[width][height];
 		this.title = "JArendelle";
+		
+		this.mainPath = mainPath;
 		
 	}
 	

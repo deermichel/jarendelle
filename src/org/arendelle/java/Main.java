@@ -27,8 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -80,6 +80,9 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	int y = 0;
 	int color = 1;
 	
+	//arendelle variables
+	String path = "";
+	
 	//drawing variables
 	int width = 0;
 	int height = 0;
@@ -97,6 +100,8 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	
 	//constructor
 	public ArendelleDemo() {
+		
+		path = System.getProperty("user.dir");
 
 		window = new JFrame("JArendelle");
 		//window.setSize(800, 600);
@@ -130,7 +135,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	//compile code
 	private void compile(String code) {
 		
-		CodeScreen screen = new CodeScreen(cellsX, cellsY);
+		CodeScreen screen = new CodeScreen(cellsX, cellsY, path);
 		
 		try {
 			MasterEvaluator.evaluate(code, screen);
@@ -307,28 +312,17 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		
 		if (e.getSource()==buttonFile) {
 			
-			//String filePath = JOptionPane.showInputDialog("Enter file path");
 			JFileChooser fc = new JFileChooser();
 			fc.showOpenDialog(null);
 			
 			try {
 				
+				path = fc.getSelectedFile().getParent();
+				String code = new String(Files.readAllBytes(fc.getSelectedFile().toPath()), StandardCharsets.UTF_8);
 				
-				FileReader fr = new FileReader(fc.getSelectedFile());
-				BufferedReader reader = new BufferedReader(fr);
-				
-				String line = "";
-				String code = "";
-				
-				while ((line = reader.readLine()) != null) {
-					code += line + '\n';
-				}
-				
+				textCode.setText(code);
 				compile(code);
 				panelResult.repaint();
-				
-				reader.close();
-				fr.close();
 
 				
 			} catch (Exception e1) {

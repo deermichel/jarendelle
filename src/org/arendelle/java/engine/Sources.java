@@ -43,17 +43,4 @@ public class Sources {
 		return expression;
 	}
 	
-	/** Generates a random number in the format of "0.XXXXX"
-	 * @param screen Screen.
-	 * @return The generated number.
-	 */
-	public static String RNDGenerator(CodeScreen screen) {
-		
-		String number = "0.";
-		
-		for (int i = 0; i < 5; i++) number += String.valueOf(screen.rand.nextInt(10));
-		
-		return number;
-	}
-	
 }

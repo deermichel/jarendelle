@@ -481,7 +481,10 @@ public class Expression {
 	 */
 	public Expression(String expression) {
 		
-		this.expression = expression.toLowerCase();
+		this.expression = "(" + expression.toLowerCase() + ")";
+		
+		this.expression = this.expression.replaceAll("and", ")and(");
+		this.expression = this.expression.replaceAll("or", ")or(");
 		
 		
 		//////////////////////////////////////
@@ -577,23 +580,6 @@ public class Expression {
 				return result;
 			}
 		});
-		addOperator(new Operator("&&", 4, false) {
-			@Override
-			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
-				boolean b1 = !v1.equals(BigDecimal.ZERO);
-				boolean b2 = !v2.equals(BigDecimal.ZERO);
-				return b1 && b2 ? BigDecimal.ONE : BigDecimal.ZERO;
-			}
-		});
-
-		addOperator(new Operator("||", 2, false) {
-			@Override
-			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
-				boolean b1 = !v1.equals(BigDecimal.ZERO);
-				boolean b2 = !v2.equals(BigDecimal.ZERO);
-				return b1 || b2 ? BigDecimal.ONE : BigDecimal.ZERO;
-			}
-		});
 
 		addOperator(new Operator(">", 10, false) {
 			@Override
@@ -658,22 +644,6 @@ public class Expression {
 			}
 		});
 
-		/*addFunction(new Function("if", 3) {
-			@Override
-			public BigDecimal eval(List<BigDecimal> parameters) {
-				boolean isTrue = !parameters.get(0).equals(BigDecimal.ZERO);
-				return isTrue ? parameters.get(1) : parameters.get(2);
-			}
-		});
-
-		addFunction(new Function("random", 0) {
-			@Override
-			public BigDecimal eval(List<BigDecimal> parameters) {
-				double d = Math.random();
-				return new BigDecimal(d, mc);
-			}
-		});*/
-		
 		addFunction(new Function("sin", 1) {
 			@Override
 			public BigDecimal eval(List<BigDecimal> parameters) {

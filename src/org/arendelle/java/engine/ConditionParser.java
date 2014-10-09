@@ -14,55 +14,46 @@ public class ConditionParser {
 	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 		
 		String expression = "";
-		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {
+		int nestedGrammars = 0;
+		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' && nestedGrammars == 0); i++) {
 			expression += arendelle.code.charAt(i);
 			arendelle.i = i;
+			
+			if (arendelle.code.charAt(i) == '[' || arendelle.code.charAt(i) == '{' || arendelle.code.charAt(i) == '(') {
+				nestedGrammars++;
+			} else if (arendelle.code.charAt(i) == ']' || arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ')') {
+				nestedGrammars--;
+			}
+			
 		}
 		
 		expression = Replacer.replaceRND(expression, screen);
 		
 		String trueCode = "";
-		int nestedGrammars = 0;
 		for (int i = arendelle.i + 2; !((arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ',') && nestedGrammars == 0); i++) {
-			
 			trueCode += arendelle.code.charAt(i);
+			arendelle.i = i;
 			
-			switch (arendelle.code.charAt(i)) {
-			case '[':
-			case '{':
-			case '(':
+			if (arendelle.code.charAt(i) == '[' || arendelle.code.charAt(i) == '{' || arendelle.code.charAt(i) == '(') {
 				nestedGrammars++;
-				break;
-			case ']':
-			case '}':
-			case ')':
+			} else if (arendelle.code.charAt(i) == ']' || arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ')') {
 				nestedGrammars--;
-				break;
 			}
 			
-			arendelle.i = i;
 		}
 		
 		String falseCode = "";
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
 			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == '}' && nestedGrammars == 0); i++) {
-				
 				falseCode += arendelle.code.charAt(i);
+				arendelle.i = i;
 				
-				switch (arendelle.code.charAt(i)) {
-				case '[':
-				case '{':
-				case '(':
+				if (arendelle.code.charAt(i) == '[' || arendelle.code.charAt(i) == '{' || arendelle.code.charAt(i) == '(') {
 					nestedGrammars++;
-					break;
-				case ']':
-				case '}':
-				case ')':
+				} else if (arendelle.code.charAt(i) == ']' || arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ')') {
 					nestedGrammars--;
-					break;
 				}
 				
-				arendelle.i = i;
 			}
 		}
 		

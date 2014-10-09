@@ -40,33 +40,32 @@ public class LoopParser {
 	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 		
 		String expression = "";
-		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != ','; i++) {
+		int nestedGrammars = 0;
+		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' && nestedGrammars == 0); i++) {
 			expression += arendelle.code.charAt(i);
 			arendelle.i = i;
+			
+			if (arendelle.code.charAt(i) == '[' || arendelle.code.charAt(i) == '{' || arendelle.code.charAt(i) == '(') {
+				nestedGrammars++;
+			} else if (arendelle.code.charAt(i) == ']' || arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ')') {
+				nestedGrammars--;
+			}
+			
 		}
 		
 		expression = Replacer.replaceRND(expression, screen);
 		
 		String loopCode = "";
-		int nestedGrammars = 0;
 		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {
-			
 			loopCode += arendelle.code.charAt(i);
+			arendelle.i = i;
 			
-			switch (arendelle.code.charAt(i)) {
-			case '[':
-			case '{':
-			case '(':
+			if (arendelle.code.charAt(i) == '[' || arendelle.code.charAt(i) == '{' || arendelle.code.charAt(i) == '(') {
 				nestedGrammars++;
-				break;
-			case ']':
-			case '}':
-			case ')':
+			} else if (arendelle.code.charAt(i) == ']' || arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ')') {
 				nestedGrammars--;
-				break;
 			}
 			
-			arendelle.i = i;
 		}
 		
 		arendelle.i++;

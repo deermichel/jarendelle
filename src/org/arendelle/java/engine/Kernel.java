@@ -19,7 +19,6 @@
 
 package org.arendelle.java.engine;
 
-import java.util.Arrays;
 import java.util.SortedMap;
 
 /** Arendelles Kernel which evaluates, reads and runs the code. */
@@ -120,7 +119,7 @@ public class Kernel {
 				break;
 				
 			case 'c':
-				for (int[] row : screen.screen) Arrays.fill(row, 0);
+				screen.screen[screen.x][screen.y] = 0;
 				break;
 				
 			case 'w':

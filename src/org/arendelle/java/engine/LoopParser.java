@@ -25,7 +25,7 @@ import java.util.TreeMap;
 public class LoopParser {
 	
 	/** Timout of while-loops (in milliseconds) */
-	public static final int TIMEOUT = 1000;
+	public static final int TIMEOUT = 2000;
 	
 	/** If true the actual loop will be aborted */
 	public static boolean breakLoop = false;
@@ -73,6 +73,11 @@ public class LoopParser {
 		Arendelle loopArendelle = new Arendelle(loopCode);
 		SortedMap<String, String> loopSpaces = new TreeMap<String, String>(spaces.comparator());
 		loopSpaces.putAll(spaces);
+		
+		expression = expression.toLowerCase();
+		
+		// fix for floOR error
+		expression = expression.replaceAll("floor", "floo_r");
 		
 		// determine if expression is a number (for-loop) or a boolean (while-loop)
 		if (expression.contains("=") || expression.contains("<") || expression.contains(">") || expression.contains("true") || 

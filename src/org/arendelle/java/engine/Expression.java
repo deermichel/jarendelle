@@ -483,8 +483,12 @@ public class Expression {
 		
 		this.expression = "(" + expression.toLowerCase() + ")";
 		
+		// fix for floOR error
+		this.expression = this.expression.replaceAll("floor", "floo_r");
+		
 		this.expression = this.expression.replaceAll("and", ")and(");
 		this.expression = this.expression.replaceAll("or", ")or(");
+		this.expression = this.expression.replaceAll("floo_r", "floor");
 		
 		
 		//////////////////////////////////////

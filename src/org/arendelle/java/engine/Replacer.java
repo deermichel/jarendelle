@@ -32,7 +32,9 @@ public class Replacer {
 	 */
 	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 
+		String expressionWithoutFunctions = "";
 		for (int i = 0; i < expression.length(); i++) {
+			
 			if (expression.charAt(i) == '!') {
 				
 				String funcExpression = "";
@@ -50,17 +52,17 @@ public class Replacer {
 					i++;
 					if (i >= expression.length()) break;
 				}
-				
 				funcExpression += expression.charAt(i);
-				 
+				
 				Arendelle tempArendelle = new Arendelle(funcExpression);
-				String result = FunctionParser.parse(tempArendelle, screen, spaces);
-				expression = expression.replaceAll(funcExpression.replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)"), result);
+				expressionWithoutFunctions += FunctionParser.parse(tempArendelle, screen, spaces);
 				
-				i -= funcExpression.length() - result.length();
-				
+			} else {
+				expressionWithoutFunctions += expression.charAt(i);
 			}
+			
 		}
+		expression = expressionWithoutFunctions;
 		
 		expression = Sources.replace(expression, screen);
 		expression = Spaces.replace(expression, screen, spaces);

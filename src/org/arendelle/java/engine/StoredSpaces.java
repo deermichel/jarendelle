@@ -19,24 +19,52 @@
 
 package org.arendelle.java.engine;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.SortedMap;
 
-public class Spaces {
+public class StoredSpaces {
 
-	/** Replaces all spaces (variables) in the given expression with their values.
+	/** Replaces all stored spaces (variables) in the given expression with their values.
 	 * @param expression Expression.
 	 * @return The final expression.
+	 * @throws Exception 
 	 */
-	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
+	public static String replace(String expression, CodeScreen screen) throws Exception {
 		
-		for (String name : spaces.keySet()) {
-			expression = expression.replaceAll('@' + name, spaces.get(name));
+		String expressionWithoutStoredSpaces = "";
+		for (int i = 0; i < expression.length(); i++) {
+			
+			if (expression.charAt(i) == '$') {
+				
+				i++;
+				
+				String name = "";
+				while(!(expression.charAt(i) == '+' || expression.charAt(i) == '-' || expression.charAt(i) == '*' || expression.charAt(i) == '/' || expression.charAt(i) == '×' || expression.charAt(i) == '÷')) {
+					name += expression.charAt(i);
+					i++;
+					if (i >= expression.length()) break;
+				}
+				
+				i--;
+				
+				String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
+				expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
+				
+			} else {
+				expressionWithoutStoredSpaces += expression.charAt(i);
+			}
+			
 		}
+		expression = expressionWithoutStoredSpaces;
 		
 		return expression;
 	}
 	
-	/** This is the Spaces kernel, where it parses and edit spaces.
+	/** This is the StoredSpaces kernel, where it parses and edit stored spaces.
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
 	 * @param spaces Spaces.
@@ -44,14 +72,8 @@ public class Spaces {
 	 */
 	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
 		
-		// determine if it should be a stored space
-		if (arendelle.code.charAt(arendelle.i + 1) == '$') {
-			StoredSpaces.parse(arendelle, screen, spaces);
-			return;
-		}
-		
 		String name = "";
-		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
+		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
 			name += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
@@ -76,13 +98,16 @@ public class Spaces {
 		
 		expression = Replacer.replaceRND(expression, screen);
 		
+		String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
+		String storedSpaceValue = "";
+		
 		if (expression == "") {
 			
 			//spaces.put(name, TODO: User input));
 			
 		} else if (expression.equals("done")) {
 			
-			spaces.remove(name);
+			new File(storedSpacePath).delete();
 			return;
 			
 		} else {
@@ -99,16 +124,20 @@ public class Spaces {
 			case '/':
 			case '×':
 			case '÷':
-				spaces.put(name, String.valueOf(new Expression(Replacer.replace(spaces.get(name) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()));
+				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
 				break;
 				
 			default:
-				spaces.put(name, String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()));
+				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue());
 				break;
 				
 			}
 			
 		}
+		
+		PrintWriter writer = new PrintWriter(storedSpacePath);
+		writer.print(storedSpaceValue);
+		writer.close();
 		
 	}
 	

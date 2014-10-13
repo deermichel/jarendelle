@@ -27,9 +27,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -38,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.arendelle.java.engine.CodeScreen;
 import org.arendelle.java.engine.MasterEvaluator;
@@ -73,7 +78,9 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	JFrame window;
 	JTextArea textCode = new JTextArea(0, 35);
 	Panel panelResult = new Panel();
-	JButton buttonFile = new JButton("File...");
+	JButton buttonOpen = new JButton("Open");
+	JButton buttonSave = new JButton("Save");
+	JButton buttonExportImage = new JButton("Export Image");
 	
 	//pointer
 	int x = 0;
@@ -110,7 +117,9 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		
 		//textCode.addActionListener(this);
 		textCode.addKeyListener(this);
-		buttonFile.addActionListener(this);
+		buttonOpen.addActionListener(this);
+		buttonSave.addActionListener(this);
+		buttonExportImage.addActionListener(this);
 		panelResult.setPreferredSize(new Dimension(800, 600));
 		
 		window.setLayout(new BorderLayout());
@@ -118,9 +127,14 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		JScrollPane scrollPane = new JScrollPane(textCode, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
+		JPanel bottomBar = new JPanel();
+		bottomBar.add(buttonOpen);
+		bottomBar.add(buttonSave);
+		bottomBar.add(buttonExportImage);
+		
 		window.add(panelResult, BorderLayout.WEST);
 		window.add(scrollPane, BorderLayout.EAST);
-		window.add(buttonFile, BorderLayout.SOUTH);
+		window.add(bottomBar, BorderLayout.SOUTH);
 		
 		window.pack();
 		window.setVisible(true);
@@ -310,7 +324,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if (e.getSource()==buttonFile) {
+		if (e.getSource()==buttonOpen) {
 			
 			JFileChooser fc = new JFileChooser();
 			fc.showOpenDialog(null);
@@ -329,6 +343,37 @@ class ArendelleDemo implements KeyListener, ActionListener {
 				System.err.println(e1.toString());
 			}
 			
+			
+		} else if (e.getSource()==buttonExportImage) {
+			
+			BufferedImage image = new BufferedImage(panelResult.getWidth(), panelResult.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics g = image.createGraphics();
+			panelResult.paint(g);
+			g.dispose();
+			
+			JFileChooser fc = new JFileChooser();
+			fc.setFileFilter(new FileNameExtensionFilter("PNG file", "png"));
+			fc.showSaveDialog(null);
+			
+			try {
+				ImageIO.write(image, "png", new File(fc.getSelectedFile().toString() + ".png"));
+			} catch (Exception e1) {
+				System.err.println(e1.toString());
+			}
+			
+		} else if (e.getSource()==buttonSave) {
+			
+			JFileChooser fc = new JFileChooser();
+			fc.setFileFilter(new FileNameExtensionFilter("Arendelle file", "arendelle"));
+			fc.showSaveDialog(null);
+			
+			try {
+				PrintWriter writer = new PrintWriter(fc.getSelectedFile().toString() + ".arendelle");
+				writer.print(textCode.getText());
+				writer.close();
+			} catch (Exception e1) {
+				System.err.println(e1.toString());
+			}
 			
 		}
 		

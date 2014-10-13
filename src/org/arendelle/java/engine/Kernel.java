@@ -74,6 +74,7 @@ public class Kernel {
 				break;
 				
 			case '\'':
+				// TODO: Fix escape code errors
 				String title = "";
 				for (int i = arendelle.i + 1; arendelle.code.charAt(i) != '\''; i++) {
 					title += arendelle.code.charAt(i);

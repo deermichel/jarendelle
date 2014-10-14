@@ -123,7 +123,16 @@ public class MasterEvaluator {
 					codeWithoutSpaces += code.charAt(i);
 					i++;
 					if (i > code.length() - 1) throw new Exception("Syntax error, insert ''' to complete statement.");
-				} while (code.charAt(i) != '\'');
+				} while (!(code.charAt(i) == '\'' && code.charAt(i - 1) != '\\'));
+			}
+			
+			// exclude strings
+			if (code.charAt(i) == '\"') {
+				do {
+					codeWithoutSpaces += code.charAt(i);
+					i++;
+					if (i > code.length() - 1) throw new Exception("Syntax error, insert '\"' to complete statement.");
+				} while (!(code.charAt(i) == '\"'));
 			}
 			
 			if (code.charAt(i) != ' ') codeWithoutSpaces += code.charAt(i);

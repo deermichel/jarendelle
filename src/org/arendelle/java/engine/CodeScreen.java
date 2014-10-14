@@ -34,8 +34,9 @@ public class CodeScreen {
 	public int screen[][];
 	public String title;
 	public String mainPath;
+	public boolean interactiveMode;
 	
-	public CodeScreen(int width, int height, String mainPath) {
+	public CodeScreen(int width, int height, String mainPath, boolean interactiveMode) {
 		
 		this.x = 0;
 		this.y = 0;
@@ -53,6 +54,8 @@ public class CodeScreen {
 		this.title = "JArendelle";
 		
 		this.mainPath = mainPath;
+		
+		this.interactiveMode = interactiveMode;
 		
 	}
 	

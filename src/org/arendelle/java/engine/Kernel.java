@@ -21,6 +21,8 @@ package org.arendelle.java.engine;
 
 import java.util.SortedMap;
 
+import javax.swing.JOptionPane;
+
 /** Arendelles Kernel which evaluates, reads and runs the code. */
 public class Kernel {
 
@@ -74,9 +76,9 @@ public class Kernel {
 				break;
 				
 			case '\'':
-				// TODO: Fix escape code errors
 				String title = "";
-				for (int i = arendelle.i + 1; arendelle.code.charAt(i) != '\''; i++) {
+				for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == '\'' && arendelle.code.charAt(i - 1) != '\\'); i++) {
+					if (arendelle.code.charAt(i) == '\\') continue;
 					title += arendelle.code.charAt(i);
 					arendelle.i = i;
 				}
@@ -127,9 +129,10 @@ public class Kernel {
 				Thread.sleep(1);
 				break;
 				
-			/*case 's':
-			    TODO: Implement command
-				break;*/
+			case 's':
+			    if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+			    JOptionPane.showMessageDialog(null, "Press 'OK' to continue");
+				break;
 				
 			case 'i':
 				screen.x = 0;

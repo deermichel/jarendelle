@@ -21,6 +21,8 @@ package org.arendelle.java.engine;
 
 import java.util.SortedMap;
 
+import javax.swing.JOptionPane;
+
 public class Spaces {
 
 	/** Replaces all spaces (variables) in the given expression with their values.
@@ -78,7 +80,9 @@ public class Spaces {
 		
 		if (expression == "") {
 			
-			//spaces.put(name, TODO: User input));
+			if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+			String value = JOptionPane.showInputDialog("Sign space '@" + name + "' with a number:");
+			spaces.put(name, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
 			
 		} else if (expression.equals("done")) {
 			
@@ -90,7 +94,11 @@ public class Spaces {
 			switch(expression.charAt(0)) {
 			
 			case '"':
-				//spaces.put(name, User input));
+				
+				if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
+				spaces.put(name, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
+				
 				break;
 				
 			case '+':

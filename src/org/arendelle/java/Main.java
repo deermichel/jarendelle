@@ -35,11 +35,13 @@ import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -81,6 +83,9 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	JButton buttonOpen = new JButton("Open");
 	JButton buttonSave = new JButton("Save");
 	JButton buttonExportImage = new JButton("Export Image");
+	JButton buttonRun = new JButton("Run");
+	JCheckBox checkInteractiveMode = new JCheckBox("Interactive Mode (disables real-time compilation)");
+	JTextPane textError = new JTextPane();
 	
 	//pointer
 	int x = 0;
@@ -119,6 +124,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		textCode.addKeyListener(this);
 		buttonOpen.addActionListener(this);
 		buttonSave.addActionListener(this);
+		buttonRun.addActionListener(this);
 		buttonExportImage.addActionListener(this);
 		panelResult.setPreferredSize(new Dimension(800, 600));
 		
@@ -131,6 +137,9 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		bottomBar.add(buttonOpen);
 		bottomBar.add(buttonSave);
 		bottomBar.add(buttonExportImage);
+		bottomBar.add(buttonRun);
+		bottomBar.add(checkInteractiveMode);
+		bottomBar.add(textError);
 		
 		window.add(panelResult, BorderLayout.WEST);
 		window.add(scrollPane, BorderLayout.EAST);
@@ -149,11 +158,12 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	//compile code
 	private void compile(String code) {
 		
-		CodeScreen screen = new CodeScreen(cellsX, cellsY, path);
+		CodeScreen screen = new CodeScreen(cellsX, cellsY, path, checkInteractiveMode.isSelected());
 		
 		try {
 			MasterEvaluator.evaluate(code, screen);
 		} catch (Exception e) {
+			textError.setText("Error: " + e.getMessage());
 			System.err.println(e.toString());
 		}
 		
@@ -312,7 +322,8 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	public void keyReleased(KeyEvent e) {
 		
 		//real-time compiling
-		if (e.getSource() == textCode) {
+		if (e.getSource() == textCode && !checkInteractiveMode.isSelected()) {
+			textError.setText("");
 			compile(textCode.getText());
 			panelResult.repaint();
 		}
@@ -333,7 +344,8 @@ class ArendelleDemo implements KeyListener, ActionListener {
 				
 				path = fc.getSelectedFile().getParent();
 				String code = new String(Files.readAllBytes(fc.getSelectedFile().toPath()), StandardCharsets.UTF_8);
-				
+
+				textError.setText("");
 				textCode.setText(code);
 				compile(code);
 				panelResult.repaint();
@@ -374,6 +386,12 @@ class ArendelleDemo implements KeyListener, ActionListener {
 			} catch (Exception e1) {
 				System.err.println(e1.toString());
 			}
+			
+		} else if (e.getSource()==buttonRun) {
+
+			textError.setText("");
+			compile(textCode.getText());
+			panelResult.repaint();
 			
 		}
 		

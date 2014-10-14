@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.SortedMap;
 
+import javax.swing.JOptionPane;
+
 public class StoredSpaces {
 
 	/** Replaces all stored spaces (variables) in the given expression with their values.
@@ -43,7 +45,7 @@ public class StoredSpaces {
 				i++;
 				
 				String name = "";
-				while(!(expression.charAt(i) == '+' || expression.charAt(i) == '-' || expression.charAt(i) == '*' || expression.charAt(i) == '/' || expression.charAt(i) == '×' || expression.charAt(i) == '÷')) {
+				while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9]"))) {
 					name += expression.charAt(i);
 					i++;
 					if (i >= expression.length()) break;
@@ -103,7 +105,9 @@ public class StoredSpaces {
 		
 		if (expression == "") {
 			
-			//spaces.put(name, TODO: User input));
+			if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+			String value = JOptionPane.showInputDialog("Sign stored space '@" + name + "' with a number:");
+			storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
 			
 		} else if (expression.equals("done")) {
 			
@@ -115,7 +119,11 @@ public class StoredSpaces {
 			switch(expression.charAt(0)) {
 			
 			case '"':
-				//spaces.put(name, User input));
+
+				if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
+				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
+				
 				break;
 				
 			case '+':

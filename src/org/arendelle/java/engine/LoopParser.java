@@ -94,7 +94,8 @@ public class LoopParser {
 			
 		} else {
 			
-			for (int i = 0; i < new Expression(Replacer.replace(expression, screen, loopSpaces)).eval().intValue(); i++) {
+			int loopTimes = new Expression(Replacer.replace(expression, screen, loopSpaces)).eval().intValue();
+			for (int i = 0; i < loopTimes; i++) {
 				loopArendelle.i = 0;
 				Kernel.eval(loopArendelle, screen, loopSpaces);
 				if (breakLoop) break;

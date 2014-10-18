@@ -38,7 +38,6 @@ public class Sources {
 		expression = expression.replaceAll("#k", String.valueOf(screen.z));
 		expression = expression.replaceAll("#depth", String.valueOf(screen.depth));
 		expression = expression.replaceAll("#n", String.valueOf(screen.color));
-		//expression = expression.replaceAll("#rnd", Sources.RNDGenerator(screen));
 		
 		return expression;
 	}

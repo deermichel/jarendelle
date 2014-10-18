@@ -86,6 +86,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	JButton buttonRun = new JButton("Run");
 	JCheckBox checkInteractiveMode = new JCheckBox("Interactive Mode (disables real-time compilation)");
 	JTextPane textError = new JTextPane();
+	JTextPane textChronometer = new JTextPane();
 	
 	//pointer
 	int x = 0;
@@ -103,6 +104,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	final int cellsX = 40;
 	final int cellsY = 30;
 	int result[][] = new int[cellsX][cellsY];
+	CodeScreen screen = null;
 	
 
 	//main method
@@ -139,6 +141,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		bottomBar.add(buttonExportImage);
 		bottomBar.add(buttonRun);
 		bottomBar.add(checkInteractiveMode);
+		bottomBar.add(textChronometer);
 		bottomBar.add(textError);
 		
 		window.add(panelResult, BorderLayout.WEST);
@@ -156,96 +159,45 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	}
 	
 	//compile code
-	private void compile(String code) {
+	private void compile(final String code) {
 		
-		CodeScreen screen = new CodeScreen(cellsX, cellsY, path, checkInteractiveMode.isSelected());
-		
-		try {
-			MasterEvaluator.evaluate(code, screen);
-		} catch (Exception e) {
-			textError.setText("Error: " + e.getMessage());
-			System.err.println(e.toString());
-		}
-		
-		result = screen.screen;
-		window.setTitle(screen.title);
-		
-		/*for (int i = 0; i < code.length(); i++) {
+		screen = new CodeScreen(cellsX, cellsY, path, checkInteractiveMode.isSelected());
 			
-			switch (code.charAt(i)) {
-			
-			case 'p':
-				result[x][y] = color;
-				break;
-				
-			case 'r':
-				x++;
-				if (x > cellsX) x = cellsX;
-				break;
-				
-			case 'l':
-				x--;
-				if (x < 0) x = 0;
-				break;
-				
-			case 'd':
-				y++;
-				if (y > cellsY) y = cellsY;
-				break;
-				
-			case 'u':
-				y--;
-				if (y < 0) y = 0;
-				break;
-				
-			case 'n':
-				color++;
-				if (color > 4) color = 1;
-				break;
-				
-			case 'i':
-				x = 0;
-				y = 0;
-				break;
-				
-			case '[':
-				
-				String mathExpr = "";
-				for (int j = i + 1; code.charAt(j) != ','; j++) {
-					mathExpr += String.valueOf(code.charAt(j));
-					i = j;
-				}
-				do {
-					i++;
-				} while (code.charAt(i) == ' ');
-				
-				ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-				int loopTimes = 0;
+		class CompilationThread extends Thread {
+
+			@Override
+			public void run() {
 				try {
-					Object result = engine.eval(mathExpr);
-					if (result instanceof Integer) {
-						loopTimes = (Integer)result;
-					} else if (result instanceof Double) {
-						loopTimes = ((Double)result).intValue();
-					}
-				} catch (ScriptException e) {
+					textChronometer.setText("");
+					long timestamp = System.nanoTime();
+					MasterEvaluator.evaluate(code, screen);
+					long elapsedTime = System.nanoTime() - timestamp;
+					textChronometer.setText(String.format("%f ms", elapsedTime / 1000000f));
+				} catch (Exception e) {
+					textError.setText("Error: " + e.getMessage());
 					System.err.println(e.toString());
 				}
-				
-				String loopCode = "";
-				for (int j = i; j != code.lastIndexOf(']'); j++) {
-					loopCode += String.valueOf(code.charAt(j));
-					i = j;
-				}				
-				i++;
-				
-				for (int j = 0; j < loopTimes; j++) compile(loopCode);
-				
-				break;
-			
 			}
 			
-		}*/
+		}
+		
+		final CompilationThread compilationThread = new CompilationThread();
+		compilationThread.start();
+		
+		class UpdateThread extends Thread {
+			
+			@Override
+			public void run() {
+				while (compilationThread.isAlive()) {
+					panelResult.repaint();
+					window.setTitle(screen.title);
+				}
+			}
+			
+		}
+		
+		UpdateThread updateThread = new UpdateThread();
+		updateThread.start();
 		
 	}
 	
@@ -265,6 +217,8 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
+			
+			if (screen != null) result = screen.screen;
 			
 			for (int x = 0; x < cellsX; x++) {
 				for (int y = 0; y < cellsY; y++) {

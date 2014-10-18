@@ -67,7 +67,7 @@ public class Replacer {
 		expression = Sources.replace(expression, screen);
 		expression = Spaces.replace(expression, screen, spaces);
 		expression = StoredSpaces.replace(expression, screen);
-		// TODO: Implement key handling
+		expression = Keys.replace(expression, screen);
 		
 		return expression;
 	}

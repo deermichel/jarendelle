@@ -35,9 +35,8 @@ public class LoopParser {
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
 	 * @param spaces Spaces.
-	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		String expression = "";
 		int nestedGrammars = 0;
@@ -52,8 +51,6 @@ public class LoopParser {
 			}
 			
 		}
-		
-		expression = Replacer.replaceRND(expression, screen);
 		
 		String loopCode = "";
 		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {
@@ -88,7 +85,10 @@ public class LoopParser {
 			while (new Expression(Replacer.replace(expression, screen, loopSpaces)).eval().intValue() != 0) {
 				loopArendelle.i = 0;
 				Kernel.eval(loopArendelle, screen, loopSpaces);
-				if (System.currentTimeMillis() - timestamp > TIMEOUT) throw new Exception("While timeout expired.");
+				if (!screen.interactiveMode && System.currentTimeMillis() - timestamp > TIMEOUT) {
+					Reporter.report("While timeout expired.", arendelle.line);
+					return;
+				}
 				if (breakLoop) break;
 			}
 			

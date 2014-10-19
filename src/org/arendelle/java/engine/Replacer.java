@@ -28,9 +28,25 @@ public class Replacer {
 	 * @param screen Screen.
 	 * @param spaces Spaces.
 	 * @return The final expression.
-	 * @throws Exception 
 	 */
-	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
+
+		expression = Replacer.replaceFunctions(expression, screen, spaces);
+		expression = Sources.replace(expression, screen);
+		expression = Spaces.replace(expression, screen, spaces);
+		expression = StoredSpaces.replace(expression, screen);
+		expression = Keys.replace(expression, screen);
+		
+		return expression;
+	}
+	
+	/** Replaces all functions in the given expression with their return values.
+	 * @param expression Expression.
+	 * @param screen Screen.
+	 * @param spaces Spaces.
+	 * @return The final expression.
+	 */
+	public static String replaceFunctions(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
 
 		String expressionWithoutFunctions = "";
 		for (int i = 0; i < expression.length(); i++) {
@@ -62,39 +78,8 @@ public class Replacer {
 			}
 			
 		}
-		expression = expressionWithoutFunctions;
 		
-		expression = Sources.replace(expression, screen);
-		expression = Spaces.replace(expression, screen, spaces);
-		expression = StoredSpaces.replace(expression, screen);
-		expression = Keys.replace(expression, screen);
-		
-		return expression;
-	}
-	
-	/** Replaces all random numbers in the given expression with their values.
-	 * @param expression Expression.
-	 * @param screen Screen.
-	 * @return The final expression.
-	 */
-	public static String replaceRND(String expression, CodeScreen screen) {
-		
-		expression = expression.replaceAll("#rnd", Replacer.RNDGenerator(screen));
-		
-		return expression;
-	}
-	
-	/** Generates a random number in the format of "0.XXXXX"
-	 * @param screen Screen.
-	 * @return The generated number.
-	 */
-	public static String RNDGenerator(CodeScreen screen) {
-		
-		String number = "0.";
-		
-		for (int i = 0; i < 5; i++) number += String.valueOf(screen.rand.nextInt(10));
-		
-		return number;
+		return expressionWithoutFunctions;
 	}
 	
 }

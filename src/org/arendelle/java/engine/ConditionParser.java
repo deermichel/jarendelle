@@ -28,9 +28,8 @@ public class ConditionParser {
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
 	 * @param spaces Spaces.
-	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		String expression = "";
 		int nestedGrammars = 0;
@@ -45,8 +44,6 @@ public class ConditionParser {
 			}
 			
 		}
-		
-		expression = Replacer.replaceRND(expression, screen);
 		
 		String trueCode = "";
 		for (int i = arendelle.i + 2; !((arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ',') && nestedGrammars == 0); i++) {

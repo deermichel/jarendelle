@@ -42,9 +42,8 @@ public class Spaces {
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
 	 * @param spaces Spaces.
-	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		// determine if it should be a stored space
 		if (arendelle.code.charAt(arendelle.i + 1) == '$') {
@@ -76,11 +75,12 @@ public class Spaces {
 		
 		arendelle.i++;
 		
-		expression = Replacer.replaceRND(expression, screen);
-		
 		if (expression == "") {
 			
-			if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+			if (!screen.interactiveMode) {
+				Reporter.report("Not running in Interactive Mode!", arendelle.line);
+				return;
+			}
 			String value = JOptionPane.showInputDialog("Sign space '@" + name + "' with a number:");
 			spaces.put(name, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
 			
@@ -95,7 +95,10 @@ public class Spaces {
 			
 			case '"':
 				
-				if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+				if (!screen.interactiveMode) {
+					Reporter.report("Not running in Interactive Mode!", arendelle.line);
+					return;
+				}
 				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
 				spaces.put(name, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
 				

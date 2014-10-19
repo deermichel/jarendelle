@@ -25,11 +25,12 @@ import java.awt.event.KeyEvent;
 
 public class Keys {
 	
-	//Supported keys
+	// supported keys
 	static boolean left = false;
 	static boolean right = false;
 	static boolean up = false;
 	static boolean down = false;
+	static boolean any = false;
 	
 	
 	/** Replaces all keys in the given expression with their state (pressed = true and not pressed = false).
@@ -38,22 +39,11 @@ public class Keys {
 	 */
 	public static String replace(String expression, CodeScreen screen) {
 		
-		// TODO: Only interact with keys in Interactive Mode
-		
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-			
-			@Override
-			public boolean dispatchKeyEvent(KeyEvent e) {
-				
-				left = (e.getKeyCode() == KeyEvent.VK_LEFT || Character.toLowerCase(e.getKeyChar()) == 'a') ? true : false;
-				right = (e.getKeyCode() == KeyEvent.VK_RIGHT || Character.toLowerCase(e.getKeyChar()) == 'd') ? true : false;
-				up = (e.getKeyCode() == KeyEvent.VK_UP || Character.toLowerCase(e.getKeyChar()) == 'w') ? true : false;
-				down = (e.getKeyCode() == KeyEvent.VK_DOWN || Character.toLowerCase(e.getKeyChar()) == 's') ? true : false;
-				
-				return false;
-			}
-			
-		});
+		// Only interact with keys in Interactive Mode
+		if (expression.contains("&") && !screen.interactiveMode) {
+			Reporter.report("Not running in Interactive Mode!", -1);
+			return expression;
+		}
 		
 		expression = expression.replaceAll("&left", String.valueOf(left));
 		expression = expression.replaceAll("&right", String.valueOf(right));
@@ -61,6 +51,27 @@ public class Keys {
 		expression = expression.replaceAll("&down", String.valueOf(down));
 		
 		return expression;
+	}
+	
+	/** Initalizes the key listener */
+	public static void init() {
+		
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+			
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				
+				any = (e.getID() == KeyEvent.KEY_PRESSED) ? true : false;
+				left = ((e.getKeyCode() == KeyEvent.VK_LEFT || Character.toLowerCase(e.getKeyChar()) == 'a') && e.getID() == KeyEvent.KEY_PRESSED) ? true : false;
+				right = ((e.getKeyCode() == KeyEvent.VK_RIGHT || Character.toLowerCase(e.getKeyChar()) == 'd') && e.getID() == KeyEvent.KEY_PRESSED) ? true : false;
+				up = ((e.getKeyCode() == KeyEvent.VK_UP || Character.toLowerCase(e.getKeyChar()) == 'w') && e.getID() == KeyEvent.KEY_PRESSED) ? true : false;
+				down = ((e.getKeyCode() == KeyEvent.VK_DOWN || Character.toLowerCase(e.getKeyChar()) == 's') && e.getID() == KeyEvent.KEY_PRESSED) ? true : false;
+				
+				return false;
+			}   
+			
+		});
+		
 	}
 	
 }

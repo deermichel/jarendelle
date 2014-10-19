@@ -29,9 +29,8 @@ public class MasterEvaluator {
 	 * The very main evaluator that runs a given code on a screen.
 	 * @param code Code.
 	 * @param screen Screen.
-	 * @throws Exception 
 	 */
-	public static void evaluate(String code, CodeScreen screen) throws Exception {
+	public static void evaluate(String code, CodeScreen screen) {
 		
 		// remove comments
 		code = MasterEvaluator.removeComments(code);
@@ -50,6 +49,12 @@ public class MasterEvaluator {
 						return s1.compareTo(s2);
 					}
 		});
+		
+		// initalize the key listener
+		Keys.init();
+		
+		// reset errors
+		Reporter.errors = "";
 		
 		// setting up an Arendelle instance
 		Arendelle arendelle = new Arendelle(code);
@@ -111,7 +116,7 @@ public class MasterEvaluator {
 		return codeWithoutComments;
 	}
 	
-	public static String removeSpaces(String code) throws Exception {
+	public static String removeSpaces(String code) {
 
 		String codeWithoutSpaces = "";
 		
@@ -122,7 +127,10 @@ public class MasterEvaluator {
 				do {
 					codeWithoutSpaces += code.charAt(i);
 					i++;
-					if (i > code.length() - 1) throw new Exception("Syntax error, insert ''' to complete statement.");
+					if (i > code.length() - 1) {
+						Reporter.report("Syntax error, insert ''' to complete statement.", -1);
+						break;
+					}
 				} while (!(code.charAt(i) == '\'' && code.charAt(i - 1) != '\\'));
 			}
 			
@@ -131,7 +139,10 @@ public class MasterEvaluator {
 				do {
 					codeWithoutSpaces += code.charAt(i);
 					i++;
-					if (i > code.length() - 1) throw new Exception("Syntax error, insert '\"' to complete statement.");
+					if (i > code.length() - 1) {
+						Reporter.report("Syntax error, insert '\"' to complete statement.", -1);
+						break;
+					}
 				} while (!(code.charAt(i) == '\"'));
 			}
 			

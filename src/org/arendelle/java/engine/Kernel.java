@@ -21,8 +21,6 @@ package org.arendelle.java.engine;
 
 import java.util.SortedMap;
 
-import javax.swing.JOptionPane;
-
 /** Arendelles Kernel which evaluates, reads and runs the code. */
 public class Kernel {
 
@@ -31,9 +29,8 @@ public class Kernel {
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
 	 * @param spaces Spaces.
-	 * @throws Exception
 	 */
-	public static void eval(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static void eval(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		/*
 		 *  So what we do is we read the code char-by-char and run the commands
@@ -126,12 +123,19 @@ public class Kernel {
 				break;
 				
 			case 'w':
-				Thread.sleep(1);
+				try {
+					Thread.sleep(1);
+				} catch (Exception e) {
+					Reporter.report(e.toString(), arendelle.line);
+				}
 				break;
 				
 			case 's':
-			    if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
-			    JOptionPane.showMessageDialog(null, "Press 'OK' to continue");
+			    if (!screen.interactiveMode) {
+			    	Reporter.report("Not running in Interactive Mode!", arendelle.line);
+			    	break;
+			    }
+			    if (!Keys.any) arendelle.i--;
 				break;
 				
 			case 'i':
@@ -145,29 +149,38 @@ public class Kernel {
 			/////////////////////////////////////////////////////
 				
 			case ']':
-				throw new Exception("Unexpected loop token ']' found.");
+				Reporter.report("Unexpected loop token ']' found.", arendelle.line);
+				break;
 				
 			case ')':
-				throw new Exception("Unexpected variable token ')' found.");
+				Reporter.report("Unexpected variable token ')' found.", arendelle.line);
+				break;
 				
 			case '}':
-				throw new Exception("Unexpected condition token '}' found.");
+				Reporter.report("Unexpected condition token '}' found.", arendelle.line);
+				break;
 				
 			case '<':
-				throw new Exception("Unexpected function header found.");
+				Reporter.report("Unexpected function header found.", arendelle.line);
+				break;
 				
 			case '>':
-				throw new Exception("Unexpected function header token '>' found.");
+				Reporter.report("Unexpected function header token '>' found.", arendelle.line);
+				break;
 				
 			case ',':
-				throw new Exception("Unexpected grammar divider ',' found.");
+				Reporter.report("Unexpected grammar divider ',' found.", arendelle.line);
+				break;
 				
-			/*case '\n':
-				TODO: Implement line counter
-				break;*/
+			case '\n':
+				arendelle.line++;
+				break;
 				
 			default:
-				if (command != ' ' && command != ';' && command != '\n' && command != '\t' && command != '\r') throw new Exception("Unknown command: '" + command + "'");
+				if (command != ' ' && command != ';' && command != '\t' && command != '\r') {
+					Reporter.report("Unknown command: '" + command + "'", arendelle.line);
+					break;
+				}
 				
 			}
 			

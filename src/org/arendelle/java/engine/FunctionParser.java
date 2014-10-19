@@ -32,9 +32,8 @@ public class FunctionParser {
 	 * @param screen Screen.
 	 * @param spaces Spaces.
 	 * @return The 'return' space.
-	 * @throws Exception 
 	 */
-	public static String parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static String parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		String functionName = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != '('; i++) {
@@ -68,7 +67,13 @@ public class FunctionParser {
 		
 		String functionPath = screen.mainPath + "/" + functionName.replace('.', '/') + ".arendelle";
 		
-		String functionCode = new String(Files.readAllBytes(Paths.get(functionPath)), StandardCharsets.UTF_8);
+		String functionCode = "";
+		try {
+			functionCode = new String(Files.readAllBytes(Paths.get(functionPath)), StandardCharsets.UTF_8);
+		} catch (Exception e) {
+			Reporter.report(e.toString(), arendelle.line);
+			return "0";
+		}
 		functionCode = MasterEvaluator.removeComments(functionCode);
 		functionCode = MasterEvaluator.removeSpaces(functionCode);
 		
@@ -86,7 +91,7 @@ public class FunctionParser {
 		String[] functionExpectedParameters = header.split(",");
 		if (functionExpectedParameters[0] == "") functionExpectedParameters = new String[0];
 		
-		for (int i = 0; i < functionExpectedParameters.length; i++) functionSpaces.put(functionExpectedParameters[i], String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval()));
+		for (int i = 0; i < functionExpectedParameters.length; i++) functionSpaces.put(functionExpectedParameters[i], String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval().intValue()));
 		
 		Kernel.eval(functionArendelle, screen, functionSpaces);
 		

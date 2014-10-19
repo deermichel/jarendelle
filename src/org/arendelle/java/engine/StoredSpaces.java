@@ -33,9 +33,8 @@ public class StoredSpaces {
 	/** Replaces all stored spaces (variables) in the given expression with their values.
 	 * @param expression Expression.
 	 * @return The final expression.
-	 * @throws Exception 
 	 */
-	public static String replace(String expression, CodeScreen screen) throws Exception {
+	public static String replace(String expression, CodeScreen screen) {
 		
 		String expressionWithoutStoredSpaces = "";
 		for (int i = 0; i < expression.length(); i++) {
@@ -54,7 +53,12 @@ public class StoredSpaces {
 				i--;
 				
 				String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
-				expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
+				try {
+					expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
+				} catch (Exception e) {
+					Reporter.report(e.toString(), -1);
+					expressionWithoutStoredSpaces += "0";
+				}
 				
 			} else {
 				expressionWithoutStoredSpaces += expression.charAt(i);
@@ -70,9 +74,8 @@ public class StoredSpaces {
 	 * @param arendelle a given Arendelle instance
 	 * @param screen Screen.
 	 * @param spaces Spaces.
-	 * @throws Exception 
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) throws Exception {
+	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
 		String name = "";
 		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
@@ -98,14 +101,15 @@ public class StoredSpaces {
 		
 		arendelle.i++;
 		
-		expression = Replacer.replaceRND(expression, screen);
-		
 		String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
 		String storedSpaceValue = "";
 		
 		if (expression == "") {
 			
-			if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+			if (!screen.interactiveMode) {
+				Reporter.report("Not running in Interactive Mode!", arendelle.line);
+				return;
+			}
 			String value = JOptionPane.showInputDialog("Sign stored space '@" + name + "' with a number:");
 			storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
 			
@@ -120,7 +124,10 @@ public class StoredSpaces {
 			
 			case '"':
 
-				if (!screen.interactiveMode) throw new Exception("Not running in Interactive Mode!");
+				if (!screen.interactiveMode) {
+					Reporter.report("Not running in Interactive Mode!", arendelle.line);
+					return;
+				}
 				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
 				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
 				
@@ -132,7 +139,11 @@ public class StoredSpaces {
 			case '/':
 			case '×':
 			case '÷':
-				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
+				try {
+					storedSpaceValue = String.valueOf(new Expression(Replacer.replace(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
+				} catch (Exception e) {
+					Reporter.report(e.toString(), arendelle.line);
+				}
 				break;
 				
 			default:
@@ -143,9 +154,14 @@ public class StoredSpaces {
 			
 		}
 		
-		PrintWriter writer = new PrintWriter(storedSpacePath);
-		writer.print(storedSpaceValue);
-		writer.close();
+		try {
+			PrintWriter writer;
+			writer = new PrintWriter(storedSpacePath);
+			writer.print(storedSpaceValue);
+			writer.close();
+		} catch (Exception e) {
+			Reporter.report(e.toString(), arendelle.line);
+		}
 		
 	}
 	

@@ -19,23 +19,18 @@
 
 package org.arendelle.java.engine;
 
-public class Arendelle {
+public class Reporter {
+	
+	/** reported errors */
+	public static String errors = "";
+	
 
-	public String code;
-	public int i;
-	public int line;
-	
-	@Override
-	public String toString() {
-		return code;
-	}
-	
-	public Arendelle(String code) {
-		
-		this.code = code;
-		this.i = 0;
-		this.line = 1;
-		
+	/** This is the Reporter kernel, where it reports an error.
+	 * @param message The error message.
+	 * @param line Line where the error occurs.
+	 */
+	public static void report(String message, int line) {
+		errors += message + " (line " + line + ")\n";
 	}
 	
 }

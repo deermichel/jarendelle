@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -48,6 +49,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.arendelle.java.engine.CodeScreen;
 import org.arendelle.java.engine.MasterEvaluator;
+import org.arendelle.java.engine.Reporter;
 
 public class Main {
 
@@ -78,14 +80,14 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	
 	//GUI objects
 	JFrame window;
-	JTextArea textCode = new JTextArea(0, 35);
+	JTextArea textCode = new JTextArea(27, 35);
 	Panel panelResult = new Panel();
 	JButton buttonOpen = new JButton("Open");
 	JButton buttonSave = new JButton("Save");
 	JButton buttonExportImage = new JButton("Export Image");
 	JButton buttonRun = new JButton("Run");
 	JCheckBox checkInteractiveMode = new JCheckBox("Interactive Mode (disables real-time compilation)");
-	JTextPane textError = new JTextPane();
+	JTextArea textError = new JTextArea(7, 35);
 	JTextPane textChronometer = new JTextPane();
 	
 	//pointer
@@ -118,11 +120,9 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		path = System.getProperty("user.dir");
 
 		window = new JFrame("JArendelle");
-		//window.setSize(800, 600);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		
-		//textCode.addActionListener(this);
 		textCode.addKeyListener(this);
 		buttonOpen.addActionListener(this);
 		buttonSave.addActionListener(this);
@@ -132,8 +132,10 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		
 		window.setLayout(new BorderLayout());
 		
-		JScrollPane scrollPane = new JScrollPane(textCode, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		textError.setEditable(false);
+		
+		JScrollPane scrollPaneCode = new JScrollPane(textCode, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPaneErrors = new JScrollPane(textError, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		JPanel bottomBar = new JPanel();
 		bottomBar.add(buttonOpen);
@@ -142,10 +144,17 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		bottomBar.add(buttonRun);
 		bottomBar.add(checkInteractiveMode);
 		bottomBar.add(textChronometer);
-		bottomBar.add(textError);
+		
+		JLabel labelErrors = new JLabel("Errors:");
+		
+		JPanel leftSide = new JPanel(new BorderLayout());
+		leftSide.add(scrollPaneCode, BorderLayout.NORTH);
+		leftSide.add(labelErrors, BorderLayout.CENTER);
+		leftSide.add(scrollPaneErrors, BorderLayout.SOUTH);
+		leftSide.setBorder(new EmptyBorder(10, 20, 10, 10));
 		
 		window.add(panelResult, BorderLayout.WEST);
-		window.add(scrollPane, BorderLayout.EAST);
+		window.add(leftSide, BorderLayout.EAST);
 		window.add(bottomBar, BorderLayout.SOUTH);
 		
 		window.pack();
@@ -167,16 +176,12 @@ class ArendelleDemo implements KeyListener, ActionListener {
 
 			@Override
 			public void run() {
-				try {
-					textChronometer.setText("");
-					long timestamp = System.nanoTime();
-					MasterEvaluator.evaluate(code, screen);
-					long elapsedTime = System.nanoTime() - timestamp;
-					textChronometer.setText(String.format("%f ms", elapsedTime / 1000000f));
-				} catch (Exception e) {
-					textError.setText("Error: " + e.getMessage());
-					System.err.println(e.toString());
-				}
+				textChronometer.setText("");
+				long timestamp = System.nanoTime();
+				MasterEvaluator.evaluate(code, screen);
+				long elapsedTime = System.nanoTime() - timestamp;
+				textChronometer.setText(String.format("%f ms", elapsedTime / 1000000f));
+				textError.setText(Reporter.errors);
 			}
 			
 		}

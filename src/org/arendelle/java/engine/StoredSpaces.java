@@ -56,7 +56,7 @@ public class StoredSpaces {
 				try {
 					expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
 				} catch (Exception e) {
-					Reporter.report(e.toString(), -1);
+					Reporter.report("No stored space as '$" + name + "' found.", -1);
 					expressionWithoutStoredSpaces += "0";
 				}
 				

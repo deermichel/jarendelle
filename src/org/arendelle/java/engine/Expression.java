@@ -905,29 +905,37 @@ public class Expression {
 	 */
 	public BigDecimal eval() {
 
-		Stack<BigDecimal> stack = new Stack<BigDecimal>();
-
-		for (String token : getRPN()) {
-			if (operators.containsKey(token)) {
-				BigDecimal v1 = stack.pop();
-				BigDecimal v2 = stack.pop();
-				stack.push(operators.get(token).eval(v2, v1));
-			} else if (variables.containsKey(token)) {
-				stack.push(variables.get(token).round(mc));
-			} else if (functions.containsKey(token.toUpperCase())) {
-				Function f = functions.get(token.toUpperCase());
-				ArrayList<BigDecimal> p = new ArrayList<BigDecimal>(
-						f.getNumParams());
-				for (int i = 0; i < f.numParams; i++) {
-					p.add(0,stack.pop());
+		try {
+		
+			Stack<BigDecimal> stack = new Stack<BigDecimal>();
+		
+			for (String token : getRPN()) {
+				if (operators.containsKey(token)) {
+					BigDecimal v1 = stack.pop();
+					BigDecimal v2 = stack.pop();
+					stack.push(operators.get(token).eval(v2, v1));
+				} else if (variables.containsKey(token)) {
+					stack.push(variables.get(token).round(mc));
+				} else if (functions.containsKey(token.toUpperCase())) {
+					Function f = functions.get(token.toUpperCase());
+					ArrayList<BigDecimal> p = new ArrayList<BigDecimal>(
+							f.getNumParams());
+					for (int i = 0; i < f.numParams; i++) {
+						p.add(0,stack.pop());
+					}
+					BigDecimal fResult = f.eval(p);
+					stack.push(fResult);
+				} else {
+					stack.push(new BigDecimal(token, mc));
 				}
-				BigDecimal fResult = f.eval(p);
-				stack.push(fResult);
-			} else {
-				stack.push(new BigDecimal(token, mc));
 			}
+			return stack.pop().stripTrailingZeros();
+		
+		} catch(Exception e) {
+			Reporter.report("Bad expression: '" + expression.substring(1, expression.length() - 1) + "'", -1);
 		}
-		return stack.pop().stripTrailingZeros();
+		
+		return new BigDecimal(0);
 	}
 
 	/**

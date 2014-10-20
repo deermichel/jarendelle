@@ -71,7 +71,8 @@ public class FunctionParser {
 		try {
 			functionCode = new String(Files.readAllBytes(Paths.get(functionPath)), StandardCharsets.UTF_8);
 		} catch (Exception e) {
-			Reporter.report(e.toString(), arendelle.line);
+			//Reporter.report(e.toString(), arendelle.line);
+			Reporter.report("Undefined function: '" + functionName + "'", arendelle.line);
 			return "0";
 		}
 		functionCode = MasterEvaluator.removeComments(functionCode);

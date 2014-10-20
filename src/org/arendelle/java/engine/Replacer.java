@@ -37,6 +37,8 @@ public class Replacer {
 		expression = StoredSpaces.replace(expression, screen);
 		expression = Keys.replace(expression, screen);
 		
+		expression = Replacer.catchErrors(expression);
+		
 		return expression;
 	}
 	
@@ -80,6 +82,60 @@ public class Replacer {
 		}
 		
 		return expressionWithoutFunctions;
+	}
+	
+	/** Catches all errors in the given expression.
+	 * @param expression Expression.
+	 * @return The final expression.
+	 */
+	public static String catchErrors(String expression) {
+		
+		String expressionWithoutErrors = "";
+		for (int i = 0; i < expression.length(); i++) {
+			
+			if (expression.charAt(i) == '@') {
+
+				i++;
+
+				String name = "";
+				switch (expression.charAt(i - 1)) {
+				
+				case '@':
+					
+					while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9]"))) {
+						name += expression.charAt(i);
+						i++;
+						if (i >= expression.length()) break;
+					}
+
+					Reporter.report("Unsigned space '@" + name + "' found.", -1);
+					
+					break;
+					
+				case '!':
+					
+					while(expression.charAt(i) != '(') {
+						name += expression.charAt(i);
+						i++;
+						if (i >= expression.length()) break;
+					}
+
+					Reporter.report("Undefined function: '" + name + "'", -1);
+					
+					break;
+				
+				}
+				
+				i--;
+				expressionWithoutErrors += "0";
+				
+			} else {
+				expressionWithoutErrors += expression.charAt(i);
+			}
+			
+		}
+		
+		return expressionWithoutErrors;
 	}
 	
 }

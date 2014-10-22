@@ -33,18 +33,19 @@ public class Keys {
 	static boolean any = false;
 	
 	
-	/** Replaces all keys in the given expression with their state (pressed = true and not pressed = false).
-	 * @param expression Expression.
-	 * @return The final expression.
+	/** replaces all keys in the given expression with their state (pressed = true and not pressed = false)
+	 * @param expression
+	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen) {
 		
-		// Only interact with keys in Interactive Mode
+		// only interact with keys in Interactive Mode
 		if (expression.contains("&") && !screen.interactiveMode) {
 			Reporter.report("Not running in Interactive Mode!", -1);
 			return expression;
 		}
 		
+		// replace key placeholders with their state
 		expression = expression.replaceAll("&left", String.valueOf(left));
 		expression = expression.replaceAll("&right", String.valueOf(right));
 		expression = expression.replaceAll("&up", String.valueOf(up));
@@ -53,7 +54,7 @@ public class Keys {
 		return expression;
 	}
 	
-	/** Initalizes the key listener */
+	/** initalizes the key listener */
 	public static void init() {
 		
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {

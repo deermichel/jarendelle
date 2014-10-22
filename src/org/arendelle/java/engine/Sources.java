@@ -21,9 +21,9 @@ package org.arendelle.java.engine;
 
 public class Sources {
 
-	/** Replaces all sources in the given expression with their values.
-	 * @param expression Expression.
-	 * @return The final expression.
+	/** replaces all sources in the given expression with their values
+	 * @param expression
+	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen) {
 		
@@ -43,9 +43,9 @@ public class Sources {
 		return expression;
 	}
 	
-	/** Generates a random number in the format of "0.XXXXX"
-	 * @param screen Screen.
-	 * @return The generated number.
+	/** generates a random number in the format of '0.XXXXX'
+	 * @param screen
+	 * @return The generated number
 	 */
 	public static String RNDGenerator(CodeScreen screen) {
 		

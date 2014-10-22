@@ -24,13 +24,14 @@ import java.util.TreeMap;
 
 public class ConditionParser {
 
-	/** This is the ConditionParser kernel, where it parses and runs a condition.
+	/** ConditionParser kernel which parses and runs a condition
 	 * @param arendelle a given Arendelle instance
-	 * @param screen Screen.
-	 * @param spaces Spaces.
+	 * @param screen
+	 * @param spaces
 	 */
 	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
+		// get mathematical expression for condition
 		String expression = "";
 		int nestedGrammars = 0;
 		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' && nestedGrammars == 0); i++) {
@@ -45,6 +46,7 @@ public class ConditionParser {
 			
 		}
 		
+		// get code which will be run if condition is true
 		String trueCode = "";
 		for (int i = arendelle.i + 2; !((arendelle.code.charAt(i) == '}' || arendelle.code.charAt(i) == ',') && nestedGrammars == 0); i++) {
 			trueCode += arendelle.code.charAt(i);
@@ -58,6 +60,7 @@ public class ConditionParser {
 			
 		}
 		
+		// get code which will be run if condition is false
 		String falseCode = "";
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
 			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == '}' && nestedGrammars == 0); i++) {
@@ -75,17 +78,20 @@ public class ConditionParser {
 		
 		arendelle.i++;
 		
+		// create Arendelle instances and temporarely spaces
 		Arendelle trueArendelle = new Arendelle(trueCode);
 		Arendelle falseArendelle = new Arendelle(falseCode);
 		SortedMap<String, String> conditionSpaces = new TreeMap<String, String>(spaces.comparator());
 		conditionSpaces.putAll(spaces);
 		
+		// run the condition
 		if (new Expression(Replacer.replace(expression, screen, conditionSpaces)).eval().intValue() != 0) {
 			Kernel.eval(trueArendelle, screen, conditionSpaces);
 		} else {
 			Kernel.eval(falseArendelle, screen, conditionSpaces);
 		}
 		
+		// remove spaces created while condition was running
 		for (String name : spaces.keySet()) {
 			spaces.put(name, conditionSpaces.get(name));
 		}

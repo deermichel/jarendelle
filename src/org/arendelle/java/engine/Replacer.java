@@ -23,11 +23,11 @@ import java.util.SortedMap;
 
 public class Replacer {
 
-	/** Replaces all variables in the given expression with their values.
-	 * @param expression Expression.
-	 * @param screen Screen.
-	 * @param spaces Spaces.
-	 * @return The final expression.
+	/** replaces all placeholders in the given expression with their values
+	 * @param expression
+	 * @param screen
+	 * @param spaces
+	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
 
@@ -42,14 +42,15 @@ public class Replacer {
 		return expression;
 	}
 	
-	/** Replaces all functions in the given expression with their return values.
-	 * @param expression Expression.
-	 * @param screen Screen.
-	 * @param spaces Spaces.
-	 * @return The final expression.
+	/** replaces all functions in the given expression with their return values
+	 * @param expression
+	 * @param screen
+	 * @param spaces
+	 * @return The final expression
 	 */
 	public static String replaceFunctions(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
 
+		// copy whole code without functions
 		String expressionWithoutFunctions = "";
 		for (int i = 0; i < expression.length(); i++) {
 			
@@ -58,6 +59,7 @@ public class Replacer {
 				String funcExpression = "";
 				int nestedGrammars = 0;
 				
+				// get function expression
 				while (!(expression.charAt(i) == ')' && nestedGrammars == 1)) {
 					funcExpression += expression.charAt(i);
 					
@@ -72,6 +74,7 @@ public class Replacer {
 				}
 				funcExpression += expression.charAt(i);
 				
+				// setup temporarely Arendelle instance and run the function expression
 				Arendelle tempArendelle = new Arendelle(funcExpression);
 				expressionWithoutFunctions += FunctionParser.parse(tempArendelle, screen, spaces);
 				
@@ -84,12 +87,13 @@ public class Replacer {
 		return expressionWithoutFunctions;
 	}
 	
-	/** Catches all errors in the given expression.
-	 * @param expression Expression.
-	 * @return The final expression.
+	/** catches all errors in the given expression
+	 * @param expression
+	 * @return The final expression
 	 */
 	public static String catchErrors(String expression) {
 		
+		// copy whole code without errors
 		String expressionWithoutErrors = "";
 		for (int i = 0; i < expression.length(); i++) {
 			
@@ -99,7 +103,8 @@ public class Replacer {
 
 				String name = "";
 				switch (expression.charAt(i - 1)) {
-				
+
+				// get unsigned spaces
 				case '@':
 					
 					while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9]"))) {
@@ -109,18 +114,6 @@ public class Replacer {
 					}
 
 					Reporter.report("Unsigned space '@" + name + "' found.", -1);
-					
-					break;
-					
-				case '!':
-					
-					while(expression.charAt(i) != '(') {
-						name += expression.charAt(i);
-						i++;
-						if (i >= expression.length()) break;
-					}
-
-					Reporter.report("Undefined function: '" + name + "'", -1);
 					
 					break;
 				

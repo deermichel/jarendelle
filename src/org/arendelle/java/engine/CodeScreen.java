@@ -21,23 +21,55 @@ package org.arendelle.java.engine;
 
 import java.util.Random;
 
+/** screen instance */
 public class CodeScreen {
 	
+	/** current x coordinate */
 	public int x;
+	
+	/** current y coordinate */
 	public int y;
+	
+	/** current z coordinate */
 	public int z;
+	
+	/** width of the screen */
 	public int width;
+	
+	/** height of the screen */
 	public int height;
+	
+	/** depth of the screen */
 	public int depth;
+	
+	/** current color */
 	public int color;
+	
+	/** randomizer */
 	public Random rand;
+	
+	/** 2d array representing the current screen */
 	public int screen[][];
+	
+	/** current screen title */
 	public String title;
+	
+	/** path of the main class */
 	public String mainPath;
+	
+	/** user interaction mode */
 	public boolean interactiveMode;
 	
+	
+	/** creates a new screen instance
+	 * @param width width of the screen
+	 * @param height height of the screen
+	 * @param mainPath path of the main class
+	 * @param interactiveMode user interaction mode
+	 */
 	public CodeScreen(int width, int height, String mainPath, boolean interactiveMode) {
 		
+		// set variables
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;

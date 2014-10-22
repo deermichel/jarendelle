@@ -21,14 +21,13 @@ package org.arendelle.java.engine;
 
 import java.util.SortedMap;
 
-/** Arendelles Kernel which evaluates, reads and runs the code. */
 public class Kernel {
 
 	/**
-	 * eval is the main core of the language where it evaluates the given code.
+	 * Arendelles kernel which evaluates the given code
 	 * @param arendelle a given Arendelle instance
-	 * @param screen Screen.
-	 * @param spaces Spaces.
+	 * @param screen
+	 * @param spaces
 	 */
 	public static void eval(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
@@ -73,6 +72,7 @@ public class Kernel {
 				break;
 				
 			case '\'':
+				// get and set screen title
 				String title = "";
 				for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == '\'' && arendelle.code.charAt(i - 1) != '\\'); i++) {
 					if (arendelle.code.charAt(i) == '\\') continue;
@@ -131,6 +131,7 @@ public class Kernel {
 				break;
 				
 			case 's':
+				// wait until the user presses a key
 			    if (!screen.interactiveMode) {
 			    	Reporter.report("Not running in Interactive Mode!", arendelle.line);
 			    	break;

@@ -30,12 +30,13 @@ import javax.swing.JOptionPane;
 
 public class StoredSpaces {
 
-	/** Replaces all stored spaces (variables) in the given expression with their values.
-	 * @param expression Expression.
-	 * @return The final expression.
+	/** replaces all stored spaces (stored variables) in the given expression with their values
+	 * @param expression
+	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen) {
 		
+		// copy whole code without stored spaces
 		String expressionWithoutStoredSpaces = "";
 		for (int i = 0; i < expression.length(); i++) {
 			
@@ -43,6 +44,7 @@ public class StoredSpaces {
 				
 				i++;
 				
+				// get name
 				String name = "";
 				while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9]"))) {
 					name += expression.charAt(i);
@@ -52,6 +54,7 @@ public class StoredSpaces {
 				
 				i--;
 				
+				// get path and read stored space
 				String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
 				try {
 					expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
@@ -70,19 +73,21 @@ public class StoredSpaces {
 		return expression;
 	}
 	
-	/** This is the StoredSpaces kernel, where it parses and edit stored spaces.
+	/** StoredSpaces kernel which parses and edit stored spaces
 	 * @param arendelle a given Arendelle instance
-	 * @param screen Screen.
-	 * @param spaces Spaces.
+	 * @param screen
+	 * @param spaces
 	 */
 	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
+		// get name
 		String name = "";
 		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
 			name += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
 		
+		// get mathematical expression for condition
 		String expression = "";
 		int nestedGrammars = 0;
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
@@ -101,11 +106,14 @@ public class StoredSpaces {
 		
 		arendelle.i++;
 		
+		// get path
 		String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
 		String storedSpaceValue = "";
 		
+		// determine action
 		if (expression == "") {
 			
+			// get user input
 			if (!screen.interactiveMode) {
 				Reporter.report("Not running in Interactive Mode!", arendelle.line);
 				return;
@@ -115,6 +123,7 @@ public class StoredSpaces {
 			
 		} else if (expression.equals("done")) {
 			
+			// delete stored space
 			new File(storedSpacePath).delete();
 			return;
 			
@@ -124,6 +133,7 @@ public class StoredSpaces {
 			
 			case '"':
 
+				// get user input by message
 				if (!screen.interactiveMode) {
 					Reporter.report("Not running in Interactive Mode!", arendelle.line);
 					return;
@@ -139,6 +149,7 @@ public class StoredSpaces {
 			case '/':
 			case '×':
 			case '÷':
+				// edit stored space
 				try {
 					storedSpaceValue = String.valueOf(new Expression(Replacer.replace(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
 				} catch (Exception e) {
@@ -147,6 +158,7 @@ public class StoredSpaces {
 				break;
 				
 			default:
+				// create stored space
 				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue());
 				break;
 				
@@ -154,6 +166,7 @@ public class StoredSpaces {
 			
 		}
 		
+		// save stored space
 		try {
 			PrintWriter writer;
 			writer = new PrintWriter(storedSpacePath);

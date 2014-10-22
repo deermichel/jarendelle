@@ -25,9 +25,9 @@ public class Reporter {
 	public static String errors = "";
 	
 
-	/** This is the Reporter kernel, where it reports an error.
-	 * @param message The error message.
-	 * @param line Line where the error occurs.
+	/** Reporter kernel which reports an error
+	 * @param message error message
+	 * @param line line where the error occurs
 	 */
 	public static void report(String message, int line) {
 		errors += message + " (line " + line + ")\n";

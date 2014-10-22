@@ -25,9 +25,9 @@ import javax.swing.JOptionPane;
 
 public class Spaces {
 
-	/** Replaces all spaces (variables) in the given expression with their values.
-	 * @param expression Expression.
-	 * @return The final expression.
+	/** replaces all spaces (variables) in the given expression with their values
+	 * @param expression
+	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
 		
@@ -38,10 +38,10 @@ public class Spaces {
 		return expression;
 	}
 	
-	/** This is the Spaces kernel, where it parses and edit spaces.
+	/** Spaces kernel which parses and edit spaces
 	 * @param arendelle a given Arendelle instance
-	 * @param screen Screen.
-	 * @param spaces Spaces.
+	 * @param screen
+	 * @param spaces
 	 */
 	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
@@ -51,12 +51,14 @@ public class Spaces {
 			return;
 		}
 		
+		// get name
 		String name = "";
 		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
 			name += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
 		
+		// get mathematical expression for condition
 		String expression = "";
 		int nestedGrammars = 0;
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
@@ -75,8 +77,10 @@ public class Spaces {
 		
 		arendelle.i++;
 		
+		// determine action
 		if (expression == "") {
 			
+			// get user input
 			if (!screen.interactiveMode) {
 				Reporter.report("Not running in Interactive Mode!", arendelle.line);
 				return;
@@ -86,6 +90,7 @@ public class Spaces {
 			
 		} else if (expression.equals("done")) {
 			
+			// remove space
 			spaces.remove(name);
 			return;
 			
@@ -95,6 +100,7 @@ public class Spaces {
 			
 			case '"':
 				
+				// get user input by message
 				if (!screen.interactiveMode) {
 					Reporter.report("Not running in Interactive Mode!", arendelle.line);
 					return;
@@ -110,10 +116,12 @@ public class Spaces {
 			case '/':
 			case '×':
 			case '÷':
+				// edit space
 				spaces.put(name, String.valueOf(new Expression(Replacer.replace(spaces.get(name) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()));
 				break;
 				
 			default:
+				// create space
 				spaces.put(name, String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()));
 				break;
 				

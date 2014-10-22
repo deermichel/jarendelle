@@ -27,14 +27,15 @@ import java.util.TreeMap;
 
 public class FunctionParser {
 
-	/** This is the FunctionParser kernel, where it parses and runs a function.
+	/** FunctionParser kernel which parses and runs a function
 	 * @param arendelle a given Arendelle instance
-	 * @param screen Screen.
-	 * @param spaces Spaces.
-	 * @return The 'return' space.
+	 * @param screen
+	 * @param spaces
+	 * @return The value of the 'return' space
 	 */
 	public static String parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
 		
+		// get function name
 		String functionName = "";
 		for (int i = arendelle.i + 1; arendelle.code.charAt(i) != '('; i++) {
 			functionName += arendelle.code.charAt(i);
@@ -43,9 +44,11 @@ public class FunctionParser {
 		
 		arendelle.i++;
 		
+		// setup temporarely spaces and the 'return' space
 		SortedMap<String, String> functionSpaces = new TreeMap<String, String>(spaces.comparator());
 		functionSpaces.put("return", "0");
 		
+		// get given parameters
 		String parameters = "";
 		int nestedGrammars = 0;
 		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ')' && nestedGrammars == 0); i++) {
@@ -62,24 +65,28 @@ public class FunctionParser {
 
 		arendelle.i++;
 		
+		// convert parameters in an array
 		String[] functionParameters = parameters.split(",");
 		if (functionParameters[0] == "") functionParameters = new String[0];
 		
+		// get function path
 		String functionPath = screen.mainPath + "/" + functionName.replace('.', '/') + ".arendelle";
 		
+		// get function code and prepare it
 		String functionCode = "";
 		try {
 			functionCode = new String(Files.readAllBytes(Paths.get(functionPath)), StandardCharsets.UTF_8);
 		} catch (Exception e) {
-			//Reporter.report(e.toString(), arendelle.line);
 			Reporter.report("Undefined function: '" + functionName + "'", arendelle.line);
 			return "0";
 		}
 		functionCode = MasterEvaluator.removeComments(functionCode);
 		functionCode = MasterEvaluator.removeSpaces(functionCode);
 		
+		// setup Arendelle instance for the function
 		Arendelle functionArendelle = new Arendelle(functionCode);
 		
+		// read function header
 		String header = "";
 		while (functionArendelle.code.charAt(functionArendelle.i) != '<') functionArendelle.i++;
 		for (int i = functionArendelle.i + 1; functionArendelle.code.charAt(i) != '>'; i++) {
@@ -89,11 +96,14 @@ public class FunctionParser {
 		
 		functionArendelle.i += 2;
 		
+		// get expected parameters
 		String[] functionExpectedParameters = header.split(",");
 		if (functionExpectedParameters[0] == "") functionExpectedParameters = new String[0];
 		
+		// set parameters
 		for (int i = 0; i < functionExpectedParameters.length; i++) functionSpaces.put(functionExpectedParameters[i], String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval().intValue()));
 		
+		// run the function
 		Kernel.eval(functionArendelle, screen, functionSpaces);
 		
 		return functionSpaces.get("return");

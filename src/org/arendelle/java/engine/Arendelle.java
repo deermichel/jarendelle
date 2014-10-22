@@ -19,10 +19,16 @@
 
 package org.arendelle.java.engine;
 
+/** Arendelle instance */
 public class Arendelle {
 
+	/** Arendelle code */
 	public String code;
+	
+	/** current evaluated char */
 	public int i;
+	
+	/** current evaluated line */
 	public int line;
 	
 	@Override
@@ -30,8 +36,12 @@ public class Arendelle {
 		return code;
 	}
 	
+	/** creates a new Arendelle instance
+	 * @param code Arendelle code
+	 */
 	public Arendelle(String code) {
 		
+		// set variables
 		this.code = code;
 		this.i = 0;
 		this.line = 1;

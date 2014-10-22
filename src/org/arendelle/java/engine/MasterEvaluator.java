@@ -26,9 +26,9 @@ import java.util.TreeMap;
 public class MasterEvaluator {
 	
 	/**
-	 * The very main evaluator that runs a given code on a screen.
-	 * @param code Code.
-	 * @param screen Screen.
+	 * The very main evaluator which runs the given code on the screen
+	 * @param code a given Arendelle code
+	 * @param screen a given Screen instance
 	 */
 	public static void evaluate(String code, CodeScreen screen) {
 		
@@ -74,6 +74,7 @@ public class MasterEvaluator {
 		String codeWithoutComments = "";
 		char command = 0;
 		
+		// copy whole code without comments
 		for (int i = 0; i < code.length(); i++) {
 			
 			command = code.charAt(i);
@@ -86,12 +87,14 @@ public class MasterEvaluator {
 				
 				case '/':
 					
+					// skip single-line comment
 					while (code.charAt(i) != '\n' && i < code.length() - 1) i++;
 					
 					break;
 					
 				case '*':
 					
+					// skip multi-line comment
 					while (!(code.charAt(i) == '*'  && code.charAt(i + 1) == '/') && i < code.length() - 2) i++;
 					i++;
 					
@@ -99,6 +102,7 @@ public class MasterEvaluator {
 					
 				default:
 					
+					// ignore
 					codeWithoutComments += '/';
 					
 					break;
@@ -120,6 +124,7 @@ public class MasterEvaluator {
 
 		String codeWithoutSpaces = "";
 		
+		// copy whole code without spaces
 		for (int i = 0; i < code.length(); i++) {
 			
 			// exclude window titles

@@ -1,15 +1,13 @@
-![](https://raw.githubusercontent.com/pmkary/pmkary.github.io/master/GitHubWideImages/Arendelle/JArendelle/MacJArendelle.png)
+<img src="https://raw.githubusercontent.com/pmkary/pmkary.github.io/master/GitHubWideImages/Arendelle/JArendelle/JArendelleWithIconAndText.png" style="width:100%"></img>
+
+Java based Arendelle Engine under development by [Micha Hanselmann](https://github.com/DeerMichel/).
 
 <br>
-![](http://web.arendelle.org/developer/graphics/jarendelleLogo.png)
-##JArendelle
-
-Java engine of Arendelle under development by [Micha Hanselmann](https://github.com/DeerMichel/).
-
 ###Libraries
 
-* [EvalEx](https://github.com/uklimaschewski/EvalEx), slightly patched ([MIT License](http://opensource.org/licenses/mit-license.html))
-
+| Library | License |
+|:----------| :-------|
+| [EvalEx](https://github.com/uklimaschewski/EvalEx), slightly patched | [MIT License](http://opensource.org/licenses/mit-license.html) |
 ###License
 
 ```

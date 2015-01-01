@@ -5,7 +5,7 @@ Java based Arendelle Engine under development by [Micha Hanselmann](https://gith
 <br>
 ###Libraries
 
-| Library | License |
+| Name | License |
 |:----------| :-------|
 | [EvalEx](https://github.com/uklimaschewski/EvalEx), slightly patched | [MIT License](http://opensource.org/licenses/mit-license.html) |
 ###License

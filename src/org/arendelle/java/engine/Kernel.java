@@ -119,7 +119,9 @@ public class Kernel {
 				break;
 				
 			case 'c':
-				screen.screen[screen.x][screen.y] = 0;
+				if (screen.x >= 0 && screen.y >= 0 && screen.x < screen.width && screen.y < screen.height) {
+					screen.screen[screen.x][screen.y] = 0;
+				}
 				break;
 				
 			case 'w':

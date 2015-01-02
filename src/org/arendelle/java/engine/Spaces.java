@@ -30,10 +30,59 @@ public class Spaces {
 	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
-		
-		for (String name : spaces.keySet()) {
-			expression = expression.replaceAll('@' + name, spaces.get(name));
+
+		// copy whole code without spaces
+		String expressionWithoutSpaces = "";
+		for (int i = 0; i < expression.length(); i++) {
+			
+			if (expression.charAt(i) == '@') {
+				
+				i++;
+				
+				// get name
+				String name = "";
+				while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9.]"))) {
+					name += expression.charAt(i);
+					i++;
+					if (i >= expression.length()) break;
+				}
+
+				// get index
+				if (i < expression.length() && expression.charAt(i) == '[') {
+					String index = "";
+					int nestedGrammars = 0;
+					for (int j = i + 1; !(expression.charAt(j) == ']' && nestedGrammars == 0); j++) {
+						index += expression.charAt(j);
+						i = j;
+						
+						if (expression.charAt(j) == '[') {
+							nestedGrammars++;
+						} else if (expression.charAt(j) == ']') {
+							nestedGrammars--;
+						}
+					}
+					index = String.valueOf(new Expression(Replacer.replace(index, screen, spaces)).eval().intValue());
+					expressionWithoutSpaces += Arrays.getArray(spaces.get(name)).get(index);
+					i++;
+				}
+				
+				// or count items
+				else if (i < expression.length() && expression.charAt(i) == '?') {
+					expressionWithoutSpaces += String.valueOf(Arrays.getArray(spaces.get(name)).size());
+				}
+				
+				// or return index = 0
+				else {
+					expressionWithoutSpaces += Arrays.getArray(spaces.get(name)).get("0");
+					i--;
+				}
+				
+			} else {
+				expressionWithoutSpaces += expression.charAt(i);
+			}
+			
 		}
+		expression = expressionWithoutSpaces;
 		
 		return expression;
 	}
@@ -53,14 +102,33 @@ public class Spaces {
 		
 		// get name
 		String name = "";
-		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
+		for (int i = arendelle.i + 1; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')' || arendelle.code.charAt(i) == '['); i++) {
 			name += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
 		
+		// get index for array
+		String index = "";
+		int nestedGrammars = 0;
+		if (arendelle.code.charAt(arendelle.i + 1) == '[') {
+			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {
+				index += arendelle.code.charAt(i);
+				arendelle.i = i;
+				
+				if (arendelle.code.charAt(i) == '[') {
+					nestedGrammars++;
+				} else if (arendelle.code.charAt(i) == ']') {
+					nestedGrammars--;
+				}
+			}
+			index = String.valueOf(new Expression(Replacer.replace(index, screen, spaces)).eval().intValue());
+			arendelle.i++;
+		} else {
+			index = "0";
+		}
+		
 		// get mathematical expression for condition
 		String expression = "";
-		int nestedGrammars = 0;
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
 			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ')' && nestedGrammars == 0); i++) {
 				expression += arendelle.code.charAt(i);
@@ -85,8 +153,9 @@ public class Spaces {
 				Reporter.report("Not running in Interactive Mode!", arendelle.line);
 				return;
 			}
-			String value = JOptionPane.showInputDialog("Sign space '@" + name + "' with a number:");
-			spaces.put(name, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
+			String message = (index == "0") ? "Sign space '@" + name + "' with a number:" : "Sign space '@" + name + "' at index " + index + " with a number:";
+			String value = JOptionPane.showInputDialog(message);
+			Arrays.put(String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()), index, name, spaces);
 			
 		} else if (expression.equals("done")) {
 			
@@ -106,7 +175,7 @@ public class Spaces {
 					return;
 				}
 				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
-				spaces.put(name, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
+				Arrays.put(String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()), index, name, spaces);
 				
 				break;
 				
@@ -120,7 +189,7 @@ public class Spaces {
 				
 			default:
 				// create space
-				spaces.put(name, String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()));
+				Arrays.put(String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()), index, name, spaces);
 				break;
 				
 			}

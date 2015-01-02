@@ -76,6 +76,7 @@ public class FunctionParser {
 		String functionCode = "";
 		try {
 			functionCode = new String(Files.readAllBytes(Paths.get(functionPath)), StandardCharsets.UTF_8);
+			// functionCode = Files.read(new File(functionPath));
 		} catch (Exception e) {
 			Reporter.report("Undefined function: '" + functionName + "'", arendelle.line);
 			return "0";

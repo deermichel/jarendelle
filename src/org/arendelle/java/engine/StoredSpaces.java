@@ -46,7 +46,7 @@ public class StoredSpaces {
 				
 				// get name
 				String name = "";
-				while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9]"))) {
+				while(!(expression.substring(i, i + 1).matches("[^A-Za-z0-9.]"))) {
 					name += expression.charAt(i);
 					i++;
 					if (i >= expression.length()) break;
@@ -58,6 +58,7 @@ public class StoredSpaces {
 				String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
 				try {
 					expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
+					// expressionWithoutStoredSpaces += Files.read(new File(storedSpacePath));
 				} catch (Exception e) {
 					Reporter.report("No stored space as '$" + name + "' found.", -1);
 					expressionWithoutStoredSpaces += "0";
@@ -147,11 +148,10 @@ public class StoredSpaces {
 			case '-':
 			case '*':
 			case '/':
-			case '×':
-			case '÷':
 				// edit stored space
 				try {
 					storedSpaceValue = String.valueOf(new Expression(Replacer.replace(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
+					// storedSpaceValue = String.valueOf(new Expression(Replacer.replace(Files.read(new File(storedSpacePath)) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
 				} catch (Exception e) {
 					Reporter.report(e.toString(), arendelle.line);
 				}
@@ -172,6 +172,7 @@ public class StoredSpaces {
 			writer = new PrintWriter(storedSpacePath);
 			writer.print(storedSpaceValue);
 			writer.close();
+			// Files.write(new File(storedSpacePath), storedSpaceValue);
 		} catch (Exception e) {
 			Reporter.report(e.toString(), arendelle.line);
 		}

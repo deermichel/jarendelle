@@ -171,7 +171,8 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	private void compile(final String code) {
 		
 		screen = new CodeScreen(cellsX, cellsY, path, checkInteractiveMode.isSelected());
-			
+		screen.title = "JArendelle";
+		
 		class CompilationThread extends Thread {
 
 			@Override

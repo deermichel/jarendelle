@@ -495,19 +495,6 @@ public class Expression {
 		///  Arendelle specific operators  ///
 		//////////////////////////////////////
 		
-		addOperator(new Operator("×", 30, true) {
-			@Override
-			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
-				return v1.multiply(v2, mc);
-			}
-		});
-		addOperator(new Operator("÷", 30, true) {
-			@Override
-			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {
-				return v1.divide(v2, mc);
-			}
-		});
-		
 		addOperator(new Operator("and", 4, false) {
 			@Override
 			public BigDecimal eval(BigDecimal v1, BigDecimal v2) {

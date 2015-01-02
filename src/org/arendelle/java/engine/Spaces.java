@@ -114,8 +114,6 @@ public class Spaces {
 			case '-':
 			case '*':
 			case '/':
-			case '×':
-			case '÷':
 				// edit space
 				spaces.put(name, String.valueOf(new Expression(Replacer.replace(spaces.get(name) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()));
 				break;

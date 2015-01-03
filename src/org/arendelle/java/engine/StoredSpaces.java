@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.SortedMap;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
@@ -79,18 +79,37 @@ public class StoredSpaces {
 	 * @param screen
 	 * @param spaces
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
+	public static void parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) {
 		
 		// get name
 		String name = "";
-		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')'); i++) {
+		for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ',' || arendelle.code.charAt(i) == ')' || arendelle.code.charAt(i) == '['); i++) {
 			name += arendelle.code.charAt(i);
 			arendelle.i = i;
 		}
 		
+		// get index for array
+		String index = "";
+		int nestedGrammars = 0;
+		if (arendelle.code.charAt(arendelle.i + 1) == '[') {
+			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {
+				index += arendelle.code.charAt(i);
+				arendelle.i = i;
+				
+				if (arendelle.code.charAt(i) == '[') {
+					nestedGrammars++;
+				} else if (arendelle.code.charAt(i) == ']') {
+					nestedGrammars--;
+				}
+			}
+			index = String.valueOf(new Expression(Replacer.replace(index, screen, spaces)).eval().intValue());
+			arendelle.i++;
+		} else {
+			index = "0";
+		}
+		
 		// get mathematical expression for condition
 		String expression = "";
-		int nestedGrammars = 0;
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
 			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ')' && nestedGrammars == 0); i++) {
 				expression += arendelle.code.charAt(i);
@@ -119,7 +138,8 @@ public class StoredSpaces {
 				Reporter.report("Not running in Interactive Mode!", arendelle.line);
 				return;
 			}
-			String value = JOptionPane.showInputDialog("Sign stored space '@" + name + "' with a number:");
+			String message = (index == "0") ? "Sign stored space '$" + name + "' with a number:" : "Sign stored space '$" + name + "' at index " + index + " with a number:";
+			String value = JOptionPane.showInputDialog(message);
 			storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
 			
 		} else if (expression.equals("done")) {
@@ -150,7 +170,7 @@ public class StoredSpaces {
 			case '/':
 				// edit stored space
 				try {
-					storedSpaceValue = String.valueOf(new Expression(Replacer.replace(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
+					storedSpaceValue = String.valueOf(new Expression(Replacer.replace(Arrays.getArray(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8)).get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
 					// storedSpaceValue = String.valueOf(new Expression(Replacer.replace(Files.read(new File(storedSpacePath)) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
 				} catch (Exception e) {
 					Reporter.report(e.toString(), arendelle.line);
@@ -166,13 +186,18 @@ public class StoredSpaces {
 			
 		}
 		
-		// save stored space
+		// save stored space or update existing
 		try {
+			HashMap<String, String> array = new HashMap<String, String>();
+			if (new File(storedSpacePath).exists()) array = Arrays.getArray(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8));
+			for (int i = 0; i < Integer.valueOf(index); i++) if (!array.containsKey(String.valueOf(i))) array.put(String.valueOf(i), "0");
+			array.put(index, storedSpaceValue);
+			
 			PrintWriter writer;
 			writer = new PrintWriter(storedSpacePath);
-			writer.print(storedSpaceValue);
+			writer.print(Arrays.getRawSpace(array));
 			writer.close();
-			// Files.write(new File(storedSpacePath), storedSpaceValue);
+			// Files.write(new File(storedSpacePath), Arrays.getRawSpace(array));
 		} catch (Exception e) {
 			Reporter.report(e.toString(), arendelle.line);
 		}

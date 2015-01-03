@@ -19,7 +19,7 @@
 
 package org.arendelle.java.engine;
 
-import java.util.SortedMap;
+import java.util.HashMap;
 
 public class Kernel {
 
@@ -29,7 +29,7 @@ public class Kernel {
 	 * @param screen
 	 * @param spaces
 	 */
-	public static void eval(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
+	public static void eval(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) {
 		
 		/*
 		 *  So what we do is we read the code char-by-char and run the commands

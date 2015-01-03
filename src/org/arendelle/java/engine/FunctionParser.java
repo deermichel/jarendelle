@@ -22,8 +22,7 @@ package org.arendelle.java.engine;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 public class FunctionParser {
 
@@ -33,7 +32,7 @@ public class FunctionParser {
 	 * @param spaces
 	 * @return The value of the 'return' space
 	 */
-	public static String parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
+	public static String parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) {
 		
 		// get function name
 		String functionName = "";
@@ -45,8 +44,8 @@ public class FunctionParser {
 		arendelle.i++;
 		
 		// setup temporarely spaces and the 'return' space
-		SortedMap<String, String> functionSpaces = new TreeMap<String, String>(spaces.comparator());
-		functionSpaces.put("return", "0");
+		HashMap<String, String> functionSpaces = new HashMap<String, String>();
+		functionSpaces.put("return", "0,0");
 		
 		// get given parameters
 		String parameters = "";
@@ -101,8 +100,16 @@ public class FunctionParser {
 		String[] functionExpectedParameters = header.split(",");
 		if (functionExpectedParameters[0] == "") functionExpectedParameters = new String[0];
 		
-		// set parameters
-		for (int i = 0; i < functionExpectedParameters.length; i++) functionSpaces.put(functionExpectedParameters[i], String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval().intValue()));
+		// set parameters (and maybe arrays)
+		String parameter = "";
+		for (int i = 0; i < functionExpectedParameters.length; i++) {
+			if (functionParameters[i].charAt(0) == '@' && spaces.containsKey(functionParameters[i].substring(1))) {
+				parameter = spaces.get(functionParameters[i].substring(1));
+			} else {
+				parameter = "0," + String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval().intValue());
+			}
+			functionSpaces.put(functionExpectedParameters[i], parameter);
+		}
 		
 		// run the function
 		Kernel.eval(functionArendelle, screen, functionSpaces);

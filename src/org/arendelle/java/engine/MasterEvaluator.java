@@ -19,9 +19,7 @@
 
 package org.arendelle.java.engine;
 
-import java.util.Comparator;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 public class MasterEvaluator {
 	
@@ -39,16 +37,7 @@ public class MasterEvaluator {
 		code = MasterEvaluator.removeSpaces(code);
 		
 		// setting up the spaces
-		SortedMap<String, String> spaces = 
-				new TreeMap<String, String>(new Comparator<String>() {
-					public int compare(String s1, String s2) {
-						int lengthComparison = s2.length() - s1.length();
-						if (lengthComparison != 0) {
-							return lengthComparison;
-						}
-						return s1.compareTo(s2);
-					}
-		});
+		HashMap<String, String> spaces = new HashMap<String, String>();
 		
 		// initalize the key listener
 		Keys.init();

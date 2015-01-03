@@ -19,8 +19,7 @@
 
 package org.arendelle.java.engine;
 
-import java.util.SortedMap;
-
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 
 public class Spaces {
@@ -29,7 +28,7 @@ public class Spaces {
 	 * @param expression
 	 * @return The final expression
 	 */
-	public static String replace(String expression, CodeScreen screen, SortedMap<String, String> spaces) {
+	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
 
 		// copy whole code without spaces
 		String expressionWithoutSpaces = "";
@@ -92,7 +91,7 @@ public class Spaces {
 	 * @param screen
 	 * @param spaces
 	 */
-	public static void parse(Arendelle arendelle, CodeScreen screen, SortedMap<String, String> spaces) {
+	public static void parse(Arendelle arendelle, CodeScreen screen, HashMap<String, String> spaces) {
 		
 		// determine if it should be a stored space
 		if (arendelle.code.charAt(arendelle.i + 1) == '$') {
@@ -184,7 +183,7 @@ public class Spaces {
 			case '*':
 			case '/':
 				// edit space
-				spaces.put(name, String.valueOf(new Expression(Replacer.replace(spaces.get(name) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()));
+				Arrays.put(String.valueOf(new Expression(Replacer.replace(Arrays.getArray(spaces.get(name)).get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()), index, name, spaces);
 				break;
 				
 			default:

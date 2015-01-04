@@ -115,6 +115,7 @@ public class Spaces {
 		
 		// get index for array
 		String index = "";
+		boolean explicitIndex = true;
 		int nestedGrammars = 0;
 		if (arendelle.code.charAt(arendelle.i + 1) == '[') {
 			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ']' && nestedGrammars == 0); i++) {
@@ -130,6 +131,7 @@ public class Spaces {
 			index = String.valueOf(new Expression(Replacer.replace(index, screen, spaces)).eval().intValue());
 			arendelle.i++;
 		} else {
+			explicitIndex = false;
 			index = "0";
 		}
 		
@@ -168,17 +170,21 @@ public class Spaces {
 			// remove space
 			spaces.remove(name);
 			
-		} else if(expression.charAt(0) == '@' && spaces.containsKey(expression.substring(1))) {
+		} else if(!explicitIndex && expression.charAt(0) == '@' && spaces.containsKey(expression.substring(1))) {
 			
 			// create space array from another space array
-			spaces.put(name, spaces.get(expression.substring(1)));
+			HashMap<String, String> array = Arrays.getArray(name);
+			array.putAll(Arrays.getArray(spaces.get(expression.substring(1))));
+			spaces.put(name, Arrays.getRawSpace(array));
 			
-		} else if(expression.charAt(0) == '$' && new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space").exists()) {
+		} else if(!explicitIndex && expression.charAt(0) == '$' && new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space").exists()) {
 			
 			// try to create space array from a stored space array
 			try {
-				spaces.put(name, new String(Files.readAllBytes(Paths.get(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space")), StandardCharsets.UTF_8));
-				// ANDROID spaces.put(name, Files.read(new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space")));
+				HashMap<String, String> array = Arrays.getArray(name);
+				array.putAll(Arrays.getArray(new String(Files.readAllBytes(Paths.get(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space")), StandardCharsets.UTF_8)));
+				// ANDROID array.putAll(Arrays.getArray(Files.read(new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space"))));
+				spaces.put(name, Arrays.getRawSpace(array));
 			} catch (Exception e) {
 				Reporter.report(e.toString(), arendelle.line);
 			}

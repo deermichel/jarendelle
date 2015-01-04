@@ -187,6 +187,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 			
 		}
 		
+		// TODO stop thread before start
 		final CompilationThread compilationThread = new CompilationThread();
 		compilationThread.start();
 		

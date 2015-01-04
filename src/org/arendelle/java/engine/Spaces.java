@@ -19,13 +19,20 @@
 
 package org.arendelle.java.engine;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+
 import javax.swing.JOptionPane;
 
 public class Spaces {
 
 	/** replaces all spaces (variables) in the given expression with their values
 	 * @param expression
+	 * @param screen
+	 * @param spaces
 	 * @return The final expression
 	 */
 	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
@@ -160,7 +167,21 @@ public class Spaces {
 			
 			// remove space
 			spaces.remove(name);
-			return;
+			
+		} else if(expression.charAt(0) == '@' && spaces.containsKey(expression.substring(1))) {
+			
+			// create space array from another space array
+			spaces.put(name, spaces.get(expression.substring(1)));
+			
+		} else if(expression.charAt(0) == '$' && new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space").exists()) {
+			
+			// try to create space array from a stored space array
+			try {
+				spaces.put(name, new String(Files.readAllBytes(Paths.get(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space")), StandardCharsets.UTF_8));
+				// ANDROID spaces.put(name, Files.read(new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space")));
+			} catch (Exception e) {
+				Reporter.report(e.toString(), arendelle.line);
+			}
 			
 		} else {
 			

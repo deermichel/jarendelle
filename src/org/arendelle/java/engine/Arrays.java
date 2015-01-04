@@ -13,10 +13,10 @@ public class Arrays {
 	public static void put(String value, String index, String name, HashMap<String, String> spaces) {
 		
 		String rawSpace = spaces.get(name);
-		if (rawSpace == null) rawSpace = index + "," + value;
+		if (rawSpace == null) rawSpace = "0";
 		HashMap<String, String> array = getArray(rawSpace);
-		array.put(index, value);
 		for (int i = 0; i < Integer.valueOf(index); i++) if (!array.containsKey(String.valueOf(i))) array.put(String.valueOf(i), "0");
+		array.put(index, value);
 		rawSpace = getRawSpace(array);
 		spaces.put(name, rawSpace);
 		
@@ -29,8 +29,8 @@ public class Arrays {
 	public static HashMap<String, String> getArray(String rawSpace) {
 		
 		HashMap<String, String> array = new HashMap<String, String>();
-		for (String item : rawSpace.split(";")) {
-			array.put(item.split(",")[0], item.split(",")[1]);
+		for (String value : rawSpace.split(";")) {
+			array.put(String.valueOf(array.size()), value);
 		}
 		
 		return array;
@@ -43,8 +43,8 @@ public class Arrays {
 	public static String getRawSpace(HashMap<String, String> array) {
 		
 		String rawSpace = "";
-		for (String index : array.keySet()) {
-			rawSpace += index + "," + array.get(index) + ";";
+		for (int i = 0; i < array.size(); i++) {
+			rawSpace += array.get(String.valueOf(i)) + ";";
 		}
 		rawSpace = rawSpace.substring(0, rawSpace.length() - 1);
 		

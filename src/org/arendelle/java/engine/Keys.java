@@ -25,7 +25,8 @@ import java.awt.event.KeyEvent;
 
 public class Keys {
 	
-	// TODO: fix CPU usage explosion
+	// ANDROID delete this file
+	// FIXME fix CPU usage explosion
 	// supported keys
 	static boolean left = false;
 	static boolean right = false;

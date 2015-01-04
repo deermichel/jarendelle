@@ -34,7 +34,7 @@ public class Replacer {
 		expression = Replacer.replaceFunctions(expression, screen, spaces);
 		expression = Sources.replace(expression, screen);
 		expression = Spaces.replace(expression, screen, spaces);
-		expression = StoredSpaces.replace(expression, screen);
+		expression = StoredSpaces.replace(expression, screen, spaces);
 		expression = Keys.replace(expression, screen);
 		
 		expression = Replacer.catchErrors(expression);

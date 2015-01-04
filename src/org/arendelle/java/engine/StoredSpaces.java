@@ -32,9 +32,11 @@ public class StoredSpaces {
 
 	/** replaces all stored spaces (stored variables) in the given expression with their values
 	 * @param expression
+	 * @param screen
+	 * @param spaces
 	 * @return The final expression
 	 */
-	public static String replace(String expression, CodeScreen screen) {
+	public static String replace(String expression, CodeScreen screen, HashMap<String, String> spaces) {
 		
 		// copy whole code without stored spaces
 		String expressionWithoutStoredSpaces = "";
@@ -52,16 +54,49 @@ public class StoredSpaces {
 					if (i >= expression.length()) break;
 				}
 				
-				i--;
-				
-				// get path and read stored space
+				// get path
 				String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
+				
+				// read stored space
+				String rawStoredSpace = "";
 				try {
-					expressionWithoutStoredSpaces += new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
-					// expressionWithoutStoredSpaces += Files.read(new File(storedSpacePath));
+					rawStoredSpace = new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8);
+					// ANDROID rawStoredSpace = Files.read(new File(storedSpacePath));
 				} catch (Exception e) {
 					Reporter.report("No stored space as '$" + name + "' found.", -1);
 					expressionWithoutStoredSpaces += "0";
+					i--;
+					continue;
+				}
+				
+				// get index
+				if (i < expression.length() && expression.charAt(i) == '[') {
+					String index = "";
+					int nestedGrammars = 0;
+					for (int j = i + 1; !(expression.charAt(j) == ']' && nestedGrammars == 0); j++) {
+						index += expression.charAt(j);
+						i = j;
+						
+						if (expression.charAt(j) == '[') {
+							nestedGrammars++;
+						} else if (expression.charAt(j) == ']') {
+							nestedGrammars--;
+						}
+					}
+					index = String.valueOf(new Expression(Replacer.replace(index, screen, spaces)).eval().intValue());
+					expressionWithoutStoredSpaces += Arrays.getArray(rawStoredSpace).get(index);
+					i++;
+				}
+				
+				// or count items
+				else if (i < expression.length() && expression.charAt(i) == '?') {
+					expressionWithoutStoredSpaces += String.valueOf(Arrays.getArray(rawStoredSpace).size());
+				}
+				
+				// or return index = 0
+				else {
+					expressionWithoutStoredSpaces += Arrays.getArray(rawStoredSpace).get("0");
+					i--;
 				}
 				
 			} else {
@@ -128,7 +163,16 @@ public class StoredSpaces {
 		
 		// get path
 		String storedSpacePath = screen.mainPath + "/" + name.replace('.', '/') + ".space";
-		String storedSpaceValue = "";
+		
+		// create array (or get existing) of stored space
+		HashMap<String, String> array = new HashMap<String, String>();
+		try {
+			if (new File(storedSpacePath).exists()) array = Arrays.getArray(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8));
+			// ANDROID if (new File(storedSpacePath).exists()) array = Arrays.getArray(Files.read(new File(storedSpacePath)));
+		} catch (Exception e) {
+			Reporter.report(e.toString(), arendelle.line);
+		}
+		for (int i = 0; i < Integer.valueOf(index); i++) if (!array.containsKey(String.valueOf(i))) array.put(String.valueOf(i), "0");
 		
 		// determine action
 		if (expression == "") {
@@ -140,13 +184,28 @@ public class StoredSpaces {
 			}
 			String message = (index == "0") ? "Sign stored space '$" + name + "' with a number:" : "Sign stored space '$" + name + "' at index " + index + " with a number:";
 			String value = JOptionPane.showInputDialog(message);
-			storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
+			array.put(index, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
 			
 		} else if (expression.equals("done")) {
 			
 			// delete stored space
 			new File(storedSpacePath).delete();
 			return;
+			
+		} else if(expression.charAt(0) == '@' && spaces.containsKey(expression.substring(1))) {
+			
+			// create stored space array from a space array
+			array.putAll(Arrays.getArray(spaces.get(expression.substring(1))));
+			
+		} else if(expression.charAt(0) == '$' && new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space").exists()) {
+			
+			// try to create stored space array from another stored space array
+			try {
+				array.putAll(Arrays.getArray(new String(Files.readAllBytes(Paths.get(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space")), StandardCharsets.UTF_8)));
+				// ANDROID array.putAll(Arrays.getArray(Files.read(new File(screen.mainPath + "/" + expression.substring(1).replace('.', '/') + ".space"))));
+			} catch (Exception e) {
+				Reporter.report(e.toString(), arendelle.line);
+			}
 			
 		} else {
 			
@@ -160,7 +219,7 @@ public class StoredSpaces {
 					return;
 				}
 				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
-				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue());
+				array.put(index, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
 				
 				break;
 				
@@ -169,35 +228,25 @@ public class StoredSpaces {
 			case '*':
 			case '/':
 				// edit stored space
-				try {
-					storedSpaceValue = String.valueOf(new Expression(Replacer.replace(Arrays.getArray(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8)).get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
-					// storedSpaceValue = String.valueOf(new Expression(Replacer.replace(Files.read(new File(storedSpacePath)) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue());
-				} catch (Exception e) {
-					Reporter.report(e.toString(), arendelle.line);
-				}
+				array.put(index, String.valueOf(new Expression(Replacer.replace(array.get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()));
 				break;
 				
 			default:
 				// create stored space
-				storedSpaceValue = String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue());
+				array.put(index, String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()));
 				break;
 				
 			}
 			
 		}
 		
-		// save stored space or update existing
+		// save stored space
 		try {
-			HashMap<String, String> array = new HashMap<String, String>();
-			if (new File(storedSpacePath).exists()) array = Arrays.getArray(new String(Files.readAllBytes(Paths.get(storedSpacePath)), StandardCharsets.UTF_8));
-			for (int i = 0; i < Integer.valueOf(index); i++) if (!array.containsKey(String.valueOf(i))) array.put(String.valueOf(i), "0");
-			array.put(index, storedSpaceValue);
-			
 			PrintWriter writer;
 			writer = new PrintWriter(storedSpacePath);
 			writer.print(Arrays.getRawSpace(array));
 			writer.close();
-			// Files.write(new File(storedSpacePath), Arrays.getRawSpace(array));
+			// ANDROID Files.write(new File(storedSpacePath), Arrays.getRawSpace(array));
 		} catch (Exception e) {
 			Reporter.report(e.toString(), arendelle.line);
 		}

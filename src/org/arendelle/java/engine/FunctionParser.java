@@ -19,6 +19,7 @@
 
 package org.arendelle.java.engine;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -75,7 +76,7 @@ public class FunctionParser {
 		String functionCode = "";
 		try {
 			functionCode = new String(Files.readAllBytes(Paths.get(functionPath)), StandardCharsets.UTF_8);
-			// functionCode = Files.read(new File(functionPath));
+			// ANDROID functionCode = Files.read(new File(functionPath));
 		} catch (Exception e) {
 			Reporter.report("Undefined function: '" + functionName + "'", arendelle.line);
 			return "0";
@@ -103,10 +104,24 @@ public class FunctionParser {
 		// set parameters (and maybe arrays)
 		String parameter = "";
 		for (int i = 0; i < functionExpectedParameters.length; i++) {
+			
 			if (functionParameters[i].charAt(0) == '@' && spaces.containsKey(functionParameters[i].substring(1))) {
+				
+				// get space array
 				parameter = spaces.get(functionParameters[i].substring(1));
+				
+			} else if (functionParameters[i].charAt(0) == '$' && new File(screen.mainPath + "/" + functionParameters[i].substring(1).replace('.', '/') + ".space").exists()) {
+				
+				// try to get stored space array
+				try {
+					parameter = new String(Files.readAllBytes(Paths.get(screen.mainPath + "/" + functionParameters[i].substring(1).replace('.', '/') + ".space")), StandardCharsets.UTF_8);
+					// ANDROID parameter = Files.read(new File(screen.mainPath + "/" + functionParameters[i].substring(1).replace('.', '/') + ".space"));
+				} catch (Exception e) {
+					Reporter.report(e.toString(), arendelle.line);
+				}
+				
 			} else {
-				parameter = "0," + String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval().intValue());
+				parameter = String.valueOf(new Expression(Replacer.replace(functionParameters[i], screen, spaces)).eval().intValue());
 			}
 			functionSpaces.put(functionExpectedParameters[i], parameter);
 		}

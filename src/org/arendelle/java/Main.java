@@ -39,6 +39,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -319,9 +320,54 @@ class ArendelleDemo implements KeyListener, ActionListener {
 			
 		} else if (e.getSource()==buttonExportImage) {
 			
-			BufferedImage image = new BufferedImage(panelResult.getWidth(), panelResult.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			Graphics g = image.createGraphics();
-			panelResult.paint(g);
+			BufferedImage image;
+			Graphics g;
+			
+			String size = JOptionPane.showInputDialog("Enter dot size (0 = standard):");
+			if (size.equals("") || screen == null) {
+				image = new BufferedImage(panelResult.getWidth(), panelResult.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				g = image.createGraphics();
+				panelResult.paint(g);
+			} else {
+				int tempCellSize = Integer.valueOf(size);
+				image = new BufferedImage(tempCellSize * cellsX, tempCellSize * cellsY, BufferedImage.TYPE_INT_ARGB);
+				g = image.createGraphics();
+				for (int x = 0; x < cellsX; x++) {
+					for (int y = 0; y < cellsY; y++) {
+						
+						switch (result[x][y]) {
+						
+						case 0:
+							g.setColor(Color.BLACK);
+							g.fillRect(x * tempCellSize, y * tempCellSize, tempCellSize, tempCellSize);
+							break;
+							
+						case 1:
+							g.setColor(Color.WHITE);
+							g.fillRect(x * tempCellSize, y * tempCellSize, tempCellSize, tempCellSize);
+							break;
+							
+						case 2:
+							g.setColor(Color.LIGHT_GRAY);
+							g.fillRect(x * tempCellSize, y * tempCellSize, tempCellSize, tempCellSize);
+							break;
+							
+						case 3:
+							g.setColor(Color.GRAY);
+							g.fillRect(x * tempCellSize, y * tempCellSize, tempCellSize, tempCellSize);
+							break;
+							
+						case 4:
+							g.setColor(Color.DARK_GRAY);
+							g.fillRect(x * tempCellSize, y * tempCellSize, tempCellSize, tempCellSize);
+							break;
+						
+						}
+						
+					}
+				}
+			}
+			
 			g.dispose();
 			
 			JFileChooser fc = new JFileChooser();

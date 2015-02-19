@@ -186,7 +186,7 @@ public class StoredSpaces {
 			}
 			String message = (index == "0") ? "Sign stored space '$" + name + "' with a number:" : "Sign stored space '$" + name + "' at index " + index + " with a number:";
 			String value = JOptionPane.showInputDialog(message);
-			array.put(index, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
+			array.put(index, new Expression(Replacer.replace(value, screen, spaces)).eval().toPlainString());
 			
 		} else if (expression.equals("done")) {
 			
@@ -209,11 +209,31 @@ public class StoredSpaces {
 				Reporter.report(e.toString(), arendelle.line);
 			}
 			
+		} else if(!explicitIndex && expression.charAt(0) == '!' && new File(screen.mainPath + "/" + expression.substring(1).replaceFirst(" *\\([^)].*\\) *", "").replace('.', '/') + ".arendelle").exists()) {
+		
+			// try to create stored space array from a function
+			try {
+				Arendelle tempArendelle = new Arendelle(expression);
+				array.putAll(Arrays.getArray(FunctionParser.parse(tempArendelle, screen, spaces)));
+			} catch (Exception e) {
+				Reporter.report(e.toString(), arendelle.line);
+			}
+			
+		} else if(!explicitIndex && expression.contains(";")) {
+			
+			// create stored space array
+			String[] values = expression.split(";");
+			array.clear();
+			for (int i = 0; i < values.length; i++) {
+				array.put(String.valueOf(i), new Expression(Replacer.replace(values[i], screen, spaces)).eval().toPlainString());
+			}
+			
 		} else {
 			
 			switch(expression.charAt(0)) {
 			
 			case '"':
+			case '\'':
 
 				// get user input by message
 				if (!screen.interactiveMode) {
@@ -221,7 +241,7 @@ public class StoredSpaces {
 					return;
 				}
 				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
-				array.put(index, String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()));
+				array.put(index, new Expression(Replacer.replace(value, screen, spaces)).eval().toPlainString());
 				
 				break;
 				
@@ -230,12 +250,12 @@ public class StoredSpaces {
 			case '*':
 			case '/':
 				// edit stored space
-				array.put(index, String.valueOf(new Expression(Replacer.replace(array.get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()));
+				array.put(index, new Expression(Replacer.replace(array.get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().toPlainString());
 				break;
 				
 			default:
 				// create stored space
-				array.put(index, String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()));
+				array.put(index, new Expression(Replacer.replace(expression, screen, spaces)).eval().toPlainString());
 				break;
 				
 			}

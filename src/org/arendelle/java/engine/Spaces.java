@@ -147,7 +147,7 @@ public class Spaces {
 			index = "0";
 		}
 		
-		// get mathematical expression for condition
+		// get mathematical expression
 		String expression = "";
 		if (arendelle.code.charAt(arendelle.i + 1) == ',') {
 			for (int i = arendelle.i + 2; !(arendelle.code.charAt(i) == ')' && nestedGrammars == 0); i++) {
@@ -181,7 +181,7 @@ public class Spaces {
 			}
 			String message = (index == "0") ? "Sign space '@" + name + "' with a number:" : "Sign space '@" + name + "' at index " + index + " with a number:";
 			String value = JOptionPane.showInputDialog(message);
-			Arrays.put(String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()), index, name, spaces);
+			Arrays.put(new Expression(Replacer.replace(value, screen, spaces)).eval().toPlainString(), index, name, spaces);
 			
 		} else if (expression.equals("done")) {
 			
@@ -211,11 +211,34 @@ public class Spaces {
 				Reporter.report(e.toString(), arendelle.line);
 			}
 			
+		} else if(!explicitIndex && expression.charAt(0) == '!' && new File(screen.mainPath + "/" + expression.substring(1).replaceFirst(" *\\([^)].*\\) *", "").replace('.', '/') + ".arendelle").exists()) {
+		
+			// try to create space array from a function
+			try {
+				HashMap<String, String> array = Arrays.getArray(name);
+				Arendelle tempArendelle = new Arendelle(expression);
+				array.putAll(Arrays.getArray(FunctionParser.parse(tempArendelle, screen, spaces)));
+				spaces.put(name, Arrays.getRawSpace(array));
+			} catch (Exception e) {
+				Reporter.report(e.toString(), arendelle.line);
+			}
+			
+		} else if(!explicitIndex && expression.contains(";")) {
+			
+			// create space array
+			String[] values = expression.split(";");
+			String rawSpace = "";
+			for (int i = 0; i < values.length; i++) {
+				rawSpace += new Expression(Replacer.replace(values[i], screen, spaces)).eval().toPlainString() + ";";
+			}
+			spaces.put(name, rawSpace.substring(0, rawSpace.length() - 1));
+			
 		} else {
 			
 			switch(expression.charAt(0)) {
 			
 			case '"':
+			case '\'':
 				
 				// get user input by message
 				if (!screen.interactiveMode) {
@@ -223,7 +246,7 @@ public class Spaces {
 					return;
 				}
 				String value = JOptionPane.showInputDialog(expression.substring(1, expression.length() - 1));
-				Arrays.put(String.valueOf(new Expression(Replacer.replace(value, screen, spaces)).eval().intValue()), index, name, spaces);
+				Arrays.put(new Expression(Replacer.replace(value, screen, spaces)).eval().toPlainString(), index, name, spaces);
 				
 				break;
 				
@@ -232,12 +255,12 @@ public class Spaces {
 			case '*':
 			case '/':
 				// edit space
-				Arrays.put(String.valueOf(new Expression(Replacer.replace(Arrays.getArray(spaces.get(name)).get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().intValue()), index, name, spaces);
+				Arrays.put(new Expression(Replacer.replace(Arrays.getArray(spaces.get(name)).get(index) + expression.charAt(0) + expression.substring(1), screen, spaces)).eval().toPlainString(), index, name, spaces);
 				break;
 				
 			default:
 				// create space
-				Arrays.put(String.valueOf(new Expression(Replacer.replace(expression, screen, spaces)).eval().intValue()), index, name, spaces);
+				Arrays.put(new Expression(Replacer.replace(expression, screen, spaces)).eval().toPlainString(), index, name, spaces);
 				break;
 				
 			}

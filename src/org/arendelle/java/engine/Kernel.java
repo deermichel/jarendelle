@@ -65,6 +65,10 @@ public class Kernel {
 				FunctionParser.parse(arendelle, screen, spaces);
 				break;
 				
+			case '~':
+				Modules.parse(arendelle, screen, spaces);
+				break;
+				
 			case '(':
 				Spaces.parse(arendelle, screen, spaces);
 				break;

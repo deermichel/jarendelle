@@ -86,6 +86,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 	JButton buttonOpen = new JButton("Open");
 	JButton buttonSave = new JButton("Save");
 	JButton buttonExportImage = new JButton("Export Image");
+	JButton buttonExportGrid = new JButton("Export Grid");
 	JButton buttonRun = new JButton("Run");
 	JCheckBox checkInteractiveMode = new JCheckBox("Interactive Mode (disables real-time compilation)");
 	JTextArea textError = new JTextArea(7, 35);
@@ -129,6 +130,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		buttonSave.addActionListener(this);
 		buttonRun.addActionListener(this);
 		buttonExportImage.addActionListener(this);
+		buttonExportGrid.addActionListener(this);
 		panelResult.setPreferredSize(new Dimension(800, 600));
 		
 		window.setLayout(new BorderLayout());
@@ -142,6 +144,7 @@ class ArendelleDemo implements KeyListener, ActionListener {
 		bottomBar.add(buttonOpen);
 		bottomBar.add(buttonSave);
 		bottomBar.add(buttonExportImage);
+		bottomBar.add(buttonExportGrid);
 		bottomBar.add(buttonRun);
 		bottomBar.add(checkInteractiveMode);
 		bottomBar.add(textChronometer);
@@ -376,6 +379,30 @@ class ArendelleDemo implements KeyListener, ActionListener {
 			
 			try {
 				ImageIO.write(image, "png", new File(fc.getSelectedFile().toString() + ".png"));
+			} catch (Exception e1) {
+				System.err.println(e1.toString());
+			}
+			
+		} else if (e.getSource()==buttonExportGrid) {
+			
+			String rawgrid = "";
+			
+			for (int y = 0; y < cellsY; y++) {
+				for (int x = 0; x < cellsX; x++) {
+					rawgrid += result[x][y] + ", ";
+				}	
+				rawgrid = rawgrid.substring(0, rawgrid.length() - 2) + ";\n";
+			}
+			
+			JFileChooser fc = new JFileChooser();
+			fc.setFileFilter(new FileNameExtensionFilter("GRID file", "grid"));
+			fc.showSaveDialog(null);
+			
+			try {
+				PrintWriter writer;
+				writer = new PrintWriter(new File(fc.getSelectedFile().toString() + ".grid"));
+				writer.print(rawgrid);
+				writer.close();
 			} catch (Exception e1) {
 				System.err.println(e1.toString());
 			}
